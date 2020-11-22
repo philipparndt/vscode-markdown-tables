@@ -19,6 +19,24 @@ function move(editor: vscode.TextEditor, line: number, col: number) {
 }
 
 suite('Commands', () => {
+    test('Keep indent', async () => {
+        const testCase =
+        `        | first | second |
+        |  blah blah | this is some text |`;
+        const expected =
+        `        | first     | second            |
+        | blah blah | this is some text |`;
+        
+        await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
+            await cfg.override({mode: cfg.Mode.Markdown});
+            move(editor, 0, 10);
+            await vscode.commands.executeCommand('text-tables.gotoNextCell');
+
+            assert.equal(document.getText(), expected);
+        });
+    });
+
+
     test('Regression: Format under cursor causes loss of data.', async () => {
         const testCase =
         `| A| B|
