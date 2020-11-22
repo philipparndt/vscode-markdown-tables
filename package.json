@@ -147,7 +147,7 @@
             {
                 "command": "text-tables.gotoNextCell",
                 "key": "tab",
-                "when": "tableMode && potentiallyInTable"
+                "when": "tableMode && potentiallyInTable && !suggestWidgetVisible"
             },
             {
                 "command": "text-tables.gotoPreviousCell",
@@ -187,7 +187,7 @@
             {
                 "command": "text-tables.nextRow",
                 "key": "enter",
-                "when": "tableMode && inTable"
+                "when": "tableMode && inTable && !suggestWidgetVisible"
             }
         ]
     },
