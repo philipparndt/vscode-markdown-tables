@@ -2,6 +2,7 @@ import * as tt from './ttTable';
 import * as vscode from 'vscode';
 import { RowType } from './ttTable';
 import { convertEOL, findTablePrefix } from './utils';
+import { markdownTableParser as parser} from '../src/markdownParser';
 
 const verticalSeparator = '|';
 const horizontalSeparator = '-';
@@ -17,7 +18,32 @@ export class MarkdownParser implements tt.Parser {
         const result = new tt.Table();
         result.prefix = findTablePrefix(text, verticalSeparator);
 
+        const ast = parser.getAST(text);
+        if (!ast || !ast.errors || ast.errors.length !== 0) {
+            const remaining = text.substring(ast.end)
+            console.log(remaining)
+            return undefined;
+        }
+
+        for (const line of ast.children) {
+            const row = line.children.filter(child => child.type === 'Row')[0];
+            const cells = row.children
+                .filter(child => child.type === 'Cell')
+                .map(cell => cell.children[0])
+                .map(cellContent => cellContent.text)
+                .map(text => text.trim());
+    
+            if (this.isSeparatorRowForColumns(cells)) {
+
+            }
+
+            result.addRow(tt.RowType.Data, cells);
+        }
+/*
+
         const strings = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
+
+        
 
         for (const s of strings) {
             const cleanedString = s.replace(/\s+/g, '');
@@ -61,6 +87,7 @@ export class MarkdownParser implements tt.Parser {
 
             result.addRow(tt.RowType.Data, values);
         }
+*/
 
         if (result.rows.some(x => x.type === RowType.Separator)) {
             result.cols.forEach(x => x.width = Math.max(x.width, 3));
@@ -69,9 +96,33 @@ export class MarkdownParser implements tt.Parser {
         return result;
     }
 
-    isSeparatorRow(text: string): boolean {
-        const cleaned = text.replace(/\s+/g, '');
-        return (cleaned.startsWith('|-') || cleaned.startsWith('|:-')) && cleaned.match(/^[:|-\s]+$/) ? true : false;
+    isSeparatorRowForColumns(columns: string[]): boolean {
+        return columns.every(column => this.isSeparatorColumn(column));
+    }
+
+    isSeparatorColumn(column: string): boolean {
+        return column.trim().match(/^[:]{0,1}-+[:]{0,1}$/) ? true : false;
+    }
+
+    getAlignment(column: string): tt.Alignment {
+        const trimmed = column.trim();
+        
+        const end = trimmed.endsWith(':');
+        const start = trimmed.startsWith(':');
+
+        if (end && start) {
+            return tt.Alignment.Center;
+        } else if (end) {
+            return tt.Alignment.Right;
+        } else if (start) {
+            return tt.Alignment.Left;
+        } else {
+            return tt.Alignment.Left; // Should be default
+        }
+    }
+
+    isSeparatorRow(_: string): boolean {
+        return false;
     }
 }
 
