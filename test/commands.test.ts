@@ -18,6 +18,10 @@ function move(editor: vscode.TextEditor, line: number, col: number) {
     editor.selection = new vscode.Selection(pos, pos);
 }
 
+function assertDocumentText(document: vscode.TextDocument, expected: String) {
+    assert.equal(document.getText().replace(/\r\n/g, '\n'), expected.replace(/\r\n/g, '\n'));
+}
+
 suite('Commands', () => {
     test('Keep indent', async () => {
         const testCase =
@@ -32,7 +36,7 @@ suite('Commands', () => {
             move(editor, 0, 10);
             await vscode.commands.executeCommand('text-tables.gotoNextCell');
 
-            assert.equal(document.getText(), expected);
+            assertDocumentText(document, expected);
         });
     });
 
@@ -50,7 +54,7 @@ suite('Commands', () => {
             move(editor, 0, 1);
             await vscode.commands.executeCommand('text-tables.gotoNextCell');
 
-            assert.equal(document.getText(), expected);
+            assertDocumentText(document, expected);
         });
     });
 
@@ -67,7 +71,7 @@ suite('Commands', () => {
             move(editor, 0, 1);
             await vscode.commands.executeCommand('text-tables.gotoNextCell');
 
-            assert.equal(document.getText(), expected);
+            assertDocumentText(document, expected);
         });
     });
 
@@ -79,7 +83,7 @@ suite('Commands', () => {
         await inTextEditor({language: 'markdown'}, async (editor, document) => {
             await cfg.override({'mode': cfg.Mode.Markdown});
             await cmd.createTable(2, 2, editor, new MarkdownStringifier());
-            assert.equal(document.getText(), expectedResult);
+            assertDocumentText(document, expectedResult);
         });
     }).timeout(10000);
 
@@ -91,7 +95,7 @@ suite('Commands', () => {
         await inTextEditor({language: 'org'}, async (editor, document) => {
             await cfg.override({'mode': cfg.Mode.Org});
             await cmd.createTable(2, 2, editor, new OrgStringifier());
-            assert.equal(document.getText(), expectedResult);
+            assertDocumentText(document, expectedResult);
         });
     });
 
@@ -112,7 +116,7 @@ suite('Commands', () => {
             await vscode.commands.executeCommand('text-tables.clearCell');
             move(editor, 1, 2);
             await vscode.commands.executeCommand('text-tables.clearCell');
-            assert.equal(document.getText(), expectedResult);
+            assertDocumentText(document, expectedResult);
         });
     });
 
@@ -143,7 +147,7 @@ suite('Commands', () => {
                 assert.deepEqual(editor.selection.start, t);
             }
 
-            assert.equal(document.getText(), expected);
+            assertDocumentText(document, expected);
         });
     });
 
@@ -195,7 +199,7 @@ suite('Commands', () => {
 
             for (const expected of steps) {
                 await vscode.commands.executeCommand('text-tables.moveRowDown');
-                assert.equal(document.getText(), expected);
+                assertDocumentText(document, expected);
             }
         });
     });
@@ -226,7 +230,7 @@ suite('Commands', () => {
             move(editor, 2, 0);
             for (const expected of steps) {
                 await vscode.commands.executeCommand('text-tables.moveRowUp');
-                assert.equal(document.getText(), expected);
+                assertDocumentText(document, expected);
             }
         });
     });
@@ -253,7 +257,7 @@ suite('Commands', () => {
             move(editor, 0, 2);
             for (const expected of steps) {
                 await vscode.commands.executeCommand('text-tables.moveColRight');
-                assert.equal(document.getText(), expected);
+                assertDocumentText(document, expected);
             }
         });
     });
@@ -279,7 +283,7 @@ suite('Commands', () => {
             move(editor, 0, 10);
             for (const expected of steps) {
                 await vscode.commands.executeCommand('text-tables.moveColLeft');
-                assert.equal(document.getText(), expected);
+                assertDocumentText(document, expected);
             }
         });
     });
@@ -297,7 +301,7 @@ suite('Commands', () => {
             await cfg.override({mode: 'org'});
 
             await vscode.commands.executeCommand('text-tables.formatUnderCursor');
-            assert.equal(document.getText(), expected);
+            assertDocumentText(document, expected);
         });
     });
 
@@ -316,7 +320,7 @@ suite('Commands', () => {
             await cfg.override({mode: 'markdown'});
 
             await vscode.commands.executeCommand('text-tables.formatUnderCursor');
-            assert.equal(document.getText(), expected);
+            assertDocumentText(document, expected);
         });
     });
 
@@ -344,7 +348,7 @@ suite('Commands', () => {
             move(editor, 0, 2);
             for (const expected of steps) {
                 await vscode.commands.executeCommand('text-tables.nextRow');
-                assert.equal(document.getText(), expected);
+                assertDocumentText(document, expected);
             }
         });
     });
