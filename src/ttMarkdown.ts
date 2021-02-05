@@ -162,8 +162,7 @@ function parseStrict(text: string, table: tt.Table): boolean {
 
         if (isSeparatorRowForColumns(cells)) {
             table.addRow(tt.RowType.Separator, cells);
-        }
-        else {
+        } else {
             table.addRow(tt.RowType.Data, cells);
         }
     }
