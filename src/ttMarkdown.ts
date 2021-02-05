@@ -18,76 +18,10 @@ export class MarkdownParser implements tt.Parser {
         const result = new tt.Table();
         result.prefix = findTablePrefix(text, verticalSeparator);
 
-        const ast = parser.getAST(text);
-        if (!ast || !ast.errors || ast.errors.length !== 0) {
-            const remaining = text.substring(ast.end)
-            console.log(remaining)
-            return undefined;
+
+        if (!parseStrict(text, result)) {
+            parseSloppy(text, result);
         }
-
-        for (const line of ast.children) {
-            const row = line.children.filter(child => child.type === 'Row')[0];
-            const cells = row.children
-                .filter(child => child.type === 'Cell')
-                .map(cell => cell.children[0])
-                .map(cellContent => cellContent.text)
-                .map(text => text.trim());
-    
-            if (this.isSeparatorRowForColumns(cells)) {
-
-            }
-
-            result.addRow(tt.RowType.Data, cells);
-        }
-/*
-
-        const strings = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
-
-        
-
-        for (const s of strings) {
-            const cleanedString = s.replace(/\s+/g, '');
-
-            if (this.isSeparatorRow(cleanedString)) {
-                result.addRow(tt.RowType.Separator, []);
-                const startIndex = cleanedString.startsWith(verticalSeparator) ? 1 : 0;
-                const endIndex = cleanedString.length - (cleanedString.endsWith(verticalSeparator) ? 1 : 0);
-                const rowParts = cleanedString.slice(startIndex, endIndex).split('|');
-
-                rowParts.forEach((part, i) => {
-                    if (part.length < 3) {
-                        return;
-                    }
-                    const trimmed = part.trim();
-                    let align = tt.Alignment.Left;
-                    if (trimmed[trimmed.length - 1] === ':') {
-                        if (trimmed[0] === ':') {
-                            align = tt.Alignment.Center;
-                        } else {
-                            align = tt.Alignment.Right;
-                        }
-                    }
-                    const col = result.cols[i];
-                    if (col) {
-                        col.alignment = align;
-                    } else {
-                        result.cols.push({ alignment: align, width: 3 });
-                    }
-                });
-
-                continue;
-            }
-
-            const lastIndex = s.length - (s.endsWith(verticalSeparator) ? 1 : 0);
-
-            const values = s
-                .slice(1, lastIndex)
-                .split(verticalSeparator)
-                .map(x => x.trim());
-
-            result.addRow(tt.RowType.Data, values);
-        }
-*/
 
         if (result.rows.some(x => x.type === RowType.Separator)) {
             result.cols.forEach(x => x.width = Math.max(x.width, 3));
@@ -96,12 +30,8 @@ export class MarkdownParser implements tt.Parser {
         return result;
     }
 
-    isSeparatorRowForColumns(columns: string[]): boolean {
-        return columns.every(column => this.isSeparatorColumn(column));
-    }
-
-    isSeparatorColumn(column: string): boolean {
-        return column.trim().match(/^[:]{0,1}-+[:]{0,1}$/) ? true : false;
+    isSeparatorRow(text: string): boolean {
+        return isSeparatorRow(text);
     }
 
     getAlignment(column: string): tt.Alignment {
@@ -119,10 +49,6 @@ export class MarkdownParser implements tt.Parser {
         } else {
             return tt.Alignment.Left; // Should be default
         }
-    }
-
-    isSeparatorRow(_: string): boolean {
-        return false;
     }
 }
 
@@ -204,5 +130,90 @@ export class MarkdownLocator implements tt.Locator {
         const endPos = reader.lineAt(end - 1).range.end;
 
         return new vscode.Range(startPos, endPos);
+    }
+}
+
+function isSeparatorRowForColumns(columns: string[]): boolean {
+    return columns.every(column => isSeparatorColumn(column));
+}
+
+function isSeparatorColumn(column: string): boolean {
+    return column.trim().match(/^[:]{0,1}-+[:]{0,1}$/) ? true : false;
+}
+
+function isSeparatorRow(text: string): boolean {
+    const cleaned = text.replace(/\s+/g, '');
+    return (cleaned.startsWith('|-') || cleaned.startsWith('|:-')) && cleaned.match(/^[:|-\s]+$/) ? true : false;
+}
+
+function parseStrict(text: string, table: tt.Table): boolean {
+    const ast = parser.getAST(text);
+    if (!ast || !ast.errors || ast.errors.length !== 0) {
+        return false;
+    }
+
+    for (const line of ast.children) {
+        const row = line.children.filter(child => child.type === 'Row')[0];
+        const cells = row.children
+            .filter(child => child.type === 'Cell')
+            .map(cell => cell.children[0])
+            .map(cellContent => cellContent.text)
+            .map(text => text.trim());
+
+        if (isSeparatorRowForColumns(cells)) {
+            table.addRow(tt.RowType.Separator, cells);
+        }
+        else {
+            table.addRow(tt.RowType.Data, cells);
+        }
+    }
+
+    return true;
+}
+
+function parseSloppy(text: string, table: tt.Table) {
+    const strings = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
+
+    for (const s of strings) {
+        const cleanedString = s.replace(/\s+/g, '');
+
+        if (isSeparatorRow(cleanedString)) {
+            table.addRow(tt.RowType.Separator, []);
+            const startIndex = cleanedString.startsWith(verticalSeparator) ? 1 : 0;
+            const endIndex = cleanedString.length - (cleanedString.endsWith(verticalSeparator) ? 1 : 0);
+            const rowParts = cleanedString.slice(startIndex, endIndex).split('|');
+
+            rowParts.forEach((part, i) => {
+                if (part.length < 3) {
+                    return;
+                }
+                const trimmed = part.trim();
+                let align = tt.Alignment.Left;
+                if (trimmed[trimmed.length - 1] === ':') {
+                    if (trimmed[0] === ':') {
+                        align = tt.Alignment.Center;
+                    } else {
+                        align = tt.Alignment.Right;
+                    }
+                }
+                const col = table.cols[i];
+                if (col) {
+                    col.alignment = align;
+                } else {
+                    table.cols.push({ alignment: align, width: 3 });
+                }
+            });
+
+            continue;
+        }
+
+        const lastIndex = s.length - (s.endsWith(verticalSeparator) ? 1 : 0);
+
+        const values = s
+            .slice(1, lastIndex)
+            .split(verticalSeparator)
+            .map(x => x.trim());
+
+            table.addRow(tt.RowType.Data, values);
     }
 }
