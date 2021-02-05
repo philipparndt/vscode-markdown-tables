@@ -2,7 +2,6 @@
 
 [![version][version-badge]][CHANGELOG]
 [![license][license-badge]][LICENSE]
-[![Build Status](https://travis-ci.org/rpeshkov/vscode-text-tables.svg?branch=master)](https://travis-ci.org/rpeshkov/vscode-text-tables)
 
 ![Text tables](icons/icon.png)
 
