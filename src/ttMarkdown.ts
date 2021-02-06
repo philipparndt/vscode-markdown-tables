@@ -18,9 +18,12 @@ export class MarkdownParser implements tt.Parser {
         const result = new tt.Table();
         result.prefix = findTablePrefix(text, verticalSeparator);
 
-
-        if (!parseStrict(text, result)) {
-            parseSloppy(text, result);
+        const lines = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
+    
+        for (const line of lines) {
+            if (!parseStrict(line, result)) {
+                parseSloppy(line, result);
+            }
         }
 
         if (result.rows.some(x => x.type === RowType.Separator)) {
@@ -170,49 +173,45 @@ function parseStrict(text: string, table: tt.Table): boolean {
     return true;
 }
 
-function parseSloppy(text: string, table: tt.Table) {
-    const strings = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
+function parseSloppy(line: string, table: tt.Table) {
+    const cleanedLine = line.replace(/\s+/g, '');
 
-    for (const s of strings) {
-        const cleanedString = s.replace(/\s+/g, '');
+    if (isSeparatorRow(cleanedLine)) {
+        table.addRow(tt.RowType.Separator, []);
+        const startIndex = cleanedLine.startsWith(verticalSeparator) ? 1 : 0;
+        const endIndex = cleanedLine.length - (cleanedLine.endsWith(verticalSeparator) ? 1 : 0);
+        const rowParts = cleanedLine.slice(startIndex, endIndex).split('|');
 
-        if (isSeparatorRow(cleanedString)) {
-            table.addRow(tt.RowType.Separator, []);
-            const startIndex = cleanedString.startsWith(verticalSeparator) ? 1 : 0;
-            const endIndex = cleanedString.length - (cleanedString.endsWith(verticalSeparator) ? 1 : 0);
-            const rowParts = cleanedString.slice(startIndex, endIndex).split('|');
-
-            rowParts.forEach((part, i) => {
-                if (part.length < 3) {
-                    return;
-                }
-                const trimmed = part.trim();
-                let align = tt.Alignment.Left;
-                if (trimmed[trimmed.length - 1] === ':') {
-                    if (trimmed[0] === ':') {
-                        align = tt.Alignment.Center;
-                    } else {
-                        align = tt.Alignment.Right;
-                    }
-                }
-                const col = table.cols[i];
-                if (col) {
-                    col.alignment = align;
+        rowParts.forEach((part, i) => {
+            if (part.length < 3) {
+                return;
+            }
+            const trimmed = part.trim();
+            let align = tt.Alignment.Left;
+            if (trimmed[trimmed.length - 1] === ':') {
+                if (trimmed[0] === ':') {
+                    align = tt.Alignment.Center;
                 } else {
-                    table.cols.push({ alignment: align, width: 3 });
+                    align = tt.Alignment.Right;
                 }
-            });
+            }
+            const col = table.cols[i];
+            if (col) {
+                col.alignment = align;
+            } else {
+                table.cols.push({ alignment: align, width: 3 });
+            }
+        });
 
-            continue;
-        }
-
-        const lastIndex = s.length - (s.endsWith(verticalSeparator) ? 1 : 0);
-
-        const values = s
-            .slice(1, lastIndex)
-            .split(verticalSeparator)
-            .map(x => x.trim());
-
-            table.addRow(tt.RowType.Data, values);
+        return;
     }
+
+    const lastIndex = line.length - (line.endsWith(verticalSeparator) ? 1 : 0);
+
+    const values = line
+        .slice(1, lastIndex)
+        .split(verticalSeparator)
+        .map(x => x.trim());
+
+        table.addRow(tt.RowType.Data, values);
 }

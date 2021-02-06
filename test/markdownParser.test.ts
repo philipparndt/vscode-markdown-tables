@@ -2,6 +2,8 @@ import { IToken } from "ebnf"
 
 import * as assert from 'assert';
 import { markdownTableParser as parser} from "../src/markdownParser";
+import { MarkdownParser } from "../src/ttMarkdown";
+import { Table } from "../src/ttTable";
 
 const cellContentOfTable = (ast: IToken) => {
     const result = []
@@ -13,6 +15,19 @@ const cellContentOfTable = (ast: IToken) => {
             .map(cellContent => cellContent.text)
 
         result.push(cells)
+    }
+    return result
+}
+
+const cellContentOfttTable = (table: Table | undefined) => {
+    const result: string[][] = []
+
+    if (!table) {
+        return result;
+    }
+
+    for (let i = 0; i < table.rows.length; i++) {
+        result.push(table.getRow(i));
     }
     return result
 }
@@ -40,5 +55,34 @@ suite('Markdown parser', () => {
         assert.deepStrictEqual(cellContentOfTable(ast), [[" A\\|B ", " C "], [" D ", " E "]]);
     });
 
+    test('parse incomplete table', () => {
+        const cleaned = `
+        | A\\|B | C | D |
+        |
+        | E | F | G |
+        `
+
+        const parser = new MarkdownParser();
+        const table = parser.parse(cleaned);
+        assert.deepStrictEqual(cellContentOfttTable(table), [
+            ["A\\|B", "C", "D"], 
+            ["", "", ""], 
+            ["E", "F", "G"]
+        ]);
+    });
+
+    test('parse incomplete table', () => {
+        const cleaned = `
+        | hi   | there    |
+        | 4   | \|
+        `
+
+        const parser = new MarkdownParser();
+        const table = parser.parse(cleaned);
+        assert.deepStrictEqual(cellContentOfttTable(table), [
+            ["hi", "there"], 
+            ["4", "\\|"], 
+        ]);
+    });
 
 });

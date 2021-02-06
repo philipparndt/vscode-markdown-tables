@@ -1,14 +1,19 @@
 import { Grammars, Parser } from 'ebnf';
 
+const cellContentGrammar = `
+CellContent  ::= CHAR*
+CHAR         ::= UNESCAPED | ESCAPE ESCAPABLE
+ESCAPABLE    ::= CellBorder
+CellBorder   ::= '|'
+ESCAPE       ::= #x5C /* \\ */
+UNESCAPED    ::= [#x09] | [#x20-#x5B] | [#x5D-#x7B] | [#x7D-#xFFFF]
+`;
+
 const rowGrammar = `
-    Row          ::= CellBorder Cell+
-    Cell         ::= CellContent CellBorder
-    CellContent  ::= CHAR*
-    CHAR         ::= UNESCAPED | ESCAPE ESCAPABLE
-    ESCAPABLE    ::= CellBorder
-    CellBorder   ::= '|'
-    ESCAPE       ::= #x5C /* \\ */
-    UNESCAPED    ::= [#x09] | [#x20-#x5B] | [#x5D-#x7B] | [#x7D-#xFFFF]
+    Row           ::= CellBorder Cell+
+    Cell          ::= CellContent CellBorder
+    IncompleteRow ::= CellBorder+
+    ${cellContentGrammar}
     `;
     
 const tableGrammar = `
