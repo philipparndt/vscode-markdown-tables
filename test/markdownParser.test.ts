@@ -74,7 +74,7 @@ suite('Markdown parser', () => {
     test('parse incomplete table', () => {
         const cleaned = `
         | hi   | there    |
-        | 4   | \|
+        | 4   | \\|
         `
 
         const parser = new MarkdownParser();

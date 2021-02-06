@@ -2,7 +2,9 @@ import * as tt from './ttTable';
 import * as vscode from 'vscode';
 import { RowType } from './ttTable';
 import { convertEOL, findTablePrefix } from './utils';
-import { markdownTableParser as parser} from '../src/markdownParser';
+import { markdownTableParser as strictParser} from '../src/markdownParser';
+import { relaxedTableParser as relaxedParser} from '../src/markdownParser';
+import { Parser } from 'ebnf';
 
 const verticalSeparator = '|';
 const horizontalSeparator = '-';
@@ -21,9 +23,7 @@ export class MarkdownParser implements tt.Parser {
         const lines = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
     
         for (const line of lines) {
-            if (!parseStrict(line, result)) {
-                parseSloppy(line, result);
-            }
+            parseRelaxed(line, result);
         }
 
         if (result.rows.some(x => x.type === RowType.Separator)) {
@@ -150,7 +150,15 @@ function isSeparatorRow(text: string): boolean {
 }
 
 function parseStrict(text: string, table: tt.Table): boolean {
-    const ast = parser.getAST(text);
+    return parse(strictParser, text, table);
+}
+
+function parseRelaxed(text: string, table: tt.Table): boolean {
+    return parse(relaxedParser, text, table);
+}
+
+function parse(parser: Parser, textLine: string, table: tt.Table): boolean {
+    const ast = parser.getAST(textLine);
     if (!ast || !ast.errors || ast.errors.length !== 0) {
         return false;
     }
@@ -158,10 +166,18 @@ function parseStrict(text: string, table: tt.Table): boolean {
     for (const line of ast.children) {
         const row = line.children.filter(child => child.type === 'Row')[0];
         const cells = row.children
-            .filter(child => child.type === 'Cell')
+            .filter(child => child.type === 'Cell' || child.type === 'EmptyCell')
             .map(cell => cell.children[0])
             .map(cellContent => cellContent.text)
             .map(text => text.trim());
+
+        const borders = row.children
+            .filter(child => child.type === 'CellBorder')
+            .length;
+
+        for (let i = cells.length; i < borders; i++) {
+            cells.push("");
+        }
 
         if (isSeparatorRowForColumns(cells)) {
             table.addRow(tt.RowType.Separator, cells);
@@ -173,45 +189,3 @@ function parseStrict(text: string, table: tt.Table): boolean {
     return true;
 }
 
-function parseSloppy(line: string, table: tt.Table) {
-    const cleanedLine = line.replace(/\s+/g, '');
-
-    if (isSeparatorRow(cleanedLine)) {
-        table.addRow(tt.RowType.Separator, []);
-        const startIndex = cleanedLine.startsWith(verticalSeparator) ? 1 : 0;
-        const endIndex = cleanedLine.length - (cleanedLine.endsWith(verticalSeparator) ? 1 : 0);
-        const rowParts = cleanedLine.slice(startIndex, endIndex).split('|');
-
-        rowParts.forEach((part, i) => {
-            if (part.length < 3) {
-                return;
-            }
-            const trimmed = part.trim();
-            let align = tt.Alignment.Left;
-            if (trimmed[trimmed.length - 1] === ':') {
-                if (trimmed[0] === ':') {
-                    align = tt.Alignment.Center;
-                } else {
-                    align = tt.Alignment.Right;
-                }
-            }
-            const col = table.cols[i];
-            if (col) {
-                col.alignment = align;
-            } else {
-                table.cols.push({ alignment: align, width: 3 });
-            }
-        });
-
-        return;
-    }
-
-    const lastIndex = line.length - (line.endsWith(verticalSeparator) ? 1 : 0);
-
-    const values = line
-        .slice(1, lastIndex)
-        .split(verticalSeparator)
-        .map(x => x.trim());
-
-        table.addRow(tt.RowType.Data, values);
-}
