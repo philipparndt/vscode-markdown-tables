@@ -13,15 +13,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Build
+      - name: Node Setup
         uses: actions/setup-node@v2-beta
         with:
           node-version: '12'
+         
+      - name: Build
         run: |
-        rm package-lock.json
-        npm --no-git-tag-version version ${{env.RELEASE_VERSION}}
-        npm install
-        npm run package
+          rm package-lock.json
+          npm --no-git-tag-version version ${{env.RELEASE_VERSION}}
+          npm install
+          npm run package
 
       - name: Create Release
         id: create_release
