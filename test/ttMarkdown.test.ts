@@ -59,6 +59,9 @@ suite('Text tables. Markdown', () => {
             if (table !== undefined) {
                 assert.equal(table.cols.length, 2);
             }
+            else {
+                assert.fail("table should be parsable")
+            }
         });
     });
 });

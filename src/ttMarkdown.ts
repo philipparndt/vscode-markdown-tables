@@ -2,6 +2,8 @@ import * as tt from './ttTable';
 import * as vscode from 'vscode';
 import { RowType } from './ttTable';
 import { convertEOL, findTablePrefix } from './utils';
+import { relaxedTableParser as relaxedParser} from '../src/markdownParser';
+import { IToken, Parser } from 'ebnf';
 
 const verticalSeparator = '|';
 const horizontalSeparator = '-';
@@ -17,49 +19,10 @@ export class MarkdownParser implements tt.Parser {
         const result = new tt.Table();
         result.prefix = findTablePrefix(text, verticalSeparator);
 
-        const strings = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
-
-        for (const s of strings) {
-            const cleanedString = s.replace(/\s+/g, '');
-
-            if (this.isSeparatorRow(cleanedString)) {
-                result.addRow(tt.RowType.Separator, []);
-                const startIndex = cleanedString.startsWith(verticalSeparator) ? 1 : 0;
-                const endIndex = cleanedString.length - (cleanedString.endsWith(verticalSeparator) ? 1 : 0);
-                const rowParts = cleanedString.slice(startIndex, endIndex).split('|');
-
-                rowParts.forEach((part, i) => {
-                    if (part.length < 3) {
-                        return;
-                    }
-                    const trimmed = part.trim();
-                    let align = tt.Alignment.Left;
-                    if (trimmed[trimmed.length - 1] === ':') {
-                        if (trimmed[0] === ':') {
-                            align = tt.Alignment.Center;
-                        } else {
-                            align = tt.Alignment.Right;
-                        }
-                    }
-                    const col = result.cols[i];
-                    if (col) {
-                        col.alignment = align;
-                    } else {
-                        result.cols.push({ alignment: align, width: 3 });
-                    }
-                });
-
-                continue;
-            }
-
-            const lastIndex = s.length - (s.endsWith(verticalSeparator) ? 1 : 0);
-
-            const values = s
-                .slice(1, lastIndex)
-                .split(verticalSeparator)
-                .map(x => x.trim());
-
-            result.addRow(tt.RowType.Data, values);
+        const lines = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
+    
+        for (const line of lines) {
+            parseRelaxed(line, result);
         }
 
         if (result.rows.some(x => x.type === RowType.Separator)) {
@@ -70,8 +33,24 @@ export class MarkdownParser implements tt.Parser {
     }
 
     isSeparatorRow(text: string): boolean {
-        const cleaned = text.replace(/\s+/g, '');
-        return (cleaned.startsWith('|-') || cleaned.startsWith('|:-')) && cleaned.match(/^[:|-\s]+$/) ? true : false;
+        return isSeparatorRow(text);
+    }
+
+    getAlignment(column: string): tt.Alignment {
+        const trimmed = column.trim();
+        
+        const end = trimmed.endsWith(':');
+        const start = trimmed.startsWith(':');
+
+        if (end && start) {
+            return tt.Alignment.Center;
+        } else if (end) {
+            return tt.Alignment.Right;
+        } else if (start) {
+            return tt.Alignment.Left;
+        } else {
+            return tt.Alignment.Left; // Should be default
+        }
     }
 }
 
@@ -154,4 +133,63 @@ export class MarkdownLocator implements tt.Locator {
 
         return new vscode.Range(startPos, endPos);
     }
+}
+
+function isSeparatorRowForColumns(columns: string[]): boolean {
+    return columns.every(column => isSeparatorColumn(column));
+}
+
+function isSeparatorColumn(column: string): boolean {
+    return column.trim().match(/^[:]{0,1}-+[:]{0,1}$/) ? true : false;
+}
+
+function isSeparatorRow(text: string): boolean {
+    const cleaned = text.replace(/\s+/g, '');
+    return (cleaned.startsWith('|-') || cleaned.startsWith('|:-')) && cleaned.match(/^[:|-\s]+$/) ? true : false;
+}
+
+function parseRelaxed(text: string, table: tt.Table): boolean {
+    return parse(relaxedParser, text, table);
+}
+
+function parse(parser: Parser, textLine: string, table: tt.Table): boolean {
+    const ast = parser.getAST(textLine);
+    if (!ast || !ast.errors || ast.errors.length !== 0) {
+        return false;
+    }
+
+    for (const line of ast.children) {
+        const row = line.children.filter(child => child.type === 'Row')[0];
+
+        const cells = getCellContent(row);
+
+        if (isSeparatorRowForColumns(cells)) {
+            table.addRow(tt.RowType.Separator, cells);
+        } else {
+            table.addRow(tt.RowType.Data, cells);
+        }
+    }
+
+    return true;
+}
+
+function getCellContent(row: IToken) {
+    const cells: string[] = [];
+    for (const cell of row.children) {
+        if (cell.type === 'EmptyCell') {
+            cells.push('');
+        } else if (cell.type === 'Cell') {
+            cells.push(cell.children[0].text.trim());
+        }
+    }
+
+    const borders = row.children
+    .filter(child => child.type === 'CellBorder')
+    .length;
+
+    for (let i = cells.length; i < borders; i++) {
+        cells.push('');
+    }
+
+    return cells;
 }
