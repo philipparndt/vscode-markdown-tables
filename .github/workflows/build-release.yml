@@ -1,4 +1,4 @@
-name: Build prerelease
+name: Build release
 
 on:
   workflow_dispatch:
@@ -24,6 +24,11 @@ jobs:
           npm --no-git-tag-version version ${{env.RELEASE_VERSION}}
           npm install
           npm run package
+    
+      - name: Test
+        run: |
+          sudo apt-get install xvfb
+          xvfb-run --auto-servernum npm test
 
       - name: Create Release
         id: create_release
