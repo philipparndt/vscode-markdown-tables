@@ -2,9 +2,8 @@ import * as tt from './ttTable';
 import * as vscode from 'vscode';
 import { RowType } from './ttTable';
 import { convertEOL, findTablePrefix } from './utils';
-import { markdownTableParser as strictParser} from '../src/markdownParser';
 import { relaxedTableParser as relaxedParser} from '../src/markdownParser';
-import { Parser } from 'ebnf';
+import { IToken, Parser } from 'ebnf';
 
 const verticalSeparator = '|';
 const horizontalSeparator = '-';
@@ -149,10 +148,6 @@ function isSeparatorRow(text: string): boolean {
     return (cleaned.startsWith('|-') || cleaned.startsWith('|:-')) && cleaned.match(/^[:|-\s]+$/) ? true : false;
 }
 
-function parseStrict(text: string, table: tt.Table): boolean {
-    return parse(strictParser, text, table);
-}
-
 function parseRelaxed(text: string, table: tt.Table): boolean {
     return parse(relaxedParser, text, table);
 }
@@ -165,19 +160,8 @@ function parse(parser: Parser, textLine: string, table: tt.Table): boolean {
 
     for (const line of ast.children) {
         const row = line.children.filter(child => child.type === 'Row')[0];
-        const cells = row.children
-            .filter(child => child.type === 'Cell' || child.type === 'EmptyCell')
-            .map(cell => cell.children[0])
-            .map(cellContent => cellContent.text)
-            .map(text => text.trim());
 
-        const borders = row.children
-            .filter(child => child.type === 'CellBorder')
-            .length;
-
-        for (let i = cells.length; i < borders; i++) {
-            cells.push("");
-        }
+        const cells = getCellContent(row);
 
         if (isSeparatorRowForColumns(cells)) {
             table.addRow(tt.RowType.Separator, cells);
@@ -189,3 +173,23 @@ function parse(parser: Parser, textLine: string, table: tt.Table): boolean {
     return true;
 }
 
+function getCellContent(row: IToken) {
+    const cells: string[] = [];
+    for (const cell of row.children) {
+        if (cell.type === 'EmptyCell') {
+            cells.push('');
+        } else if (cell.type === 'Cell') {
+            cells.push(cell.children[0].text.trim());
+        }
+    }
+
+    const borders = row.children
+    .filter(child => child.type === 'CellBorder')
+    .length;
+
+    for (let i = cells.length; i < borders; i++) {
+        cells.push('');
+    }
+
+    return cells;
+}

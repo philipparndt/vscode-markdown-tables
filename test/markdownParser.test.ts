@@ -1,7 +1,7 @@
 import { IToken } from "ebnf"
 
 import * as assert from 'assert';
-import { markdownTableParser as parser} from "../src/markdownParser";
+import { relaxedTableParser as parser} from "../src/markdownParser";
 import { MarkdownParser } from "../src/ttMarkdown";
 import { Table } from "../src/ttTable";
 
@@ -85,4 +85,35 @@ suite('Markdown parser', () => {
         ]);
     });
 
+    test('parse empty cells', () => {
+        const cleaned = `
+        | a | b |
+        |||
+        | c | d |
+        `
+
+        const parser = new MarkdownParser();
+        const table = parser.parse(cleaned);
+        assert.deepStrictEqual(cellContentOfttTable(table), [
+            ["a", "b"],
+            ["", ""],
+            ["c", "d"], 
+        ]);
+    });
+
+    test('parse additional cell', () => {
+        const cleaned = `
+        | a | b ||
+        |||
+        | c | d |
+        `
+
+        const parser = new MarkdownParser();
+        const table = parser.parse(cleaned);
+        assert.deepStrictEqual(cellContentOfttTable(table), [
+            ["a", "b", ""],
+            ["", "", ""],
+            ["c", "d", ""], 
+        ]);
+    });
 });
