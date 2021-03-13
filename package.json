@@ -210,7 +210,7 @@
         "glob": "7.1.6",
         "mocha": "7.2.0",
         "typescript": "3.9.9",
-        "vsce": "1.81.1",
+        "vsce": "1.87.0",
         "vscode-test": "1.5.1"
     },
     "dependencies": {
