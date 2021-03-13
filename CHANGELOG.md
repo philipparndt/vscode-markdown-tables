@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+# [1.1.0] - 2021-03-13
+[1.1.0]: https://github.com/philipparndt/vscode-markdown-tables/releases/tag/1.1.0-b1
+
+- Use EOL character form vscode.TextEditor
+- Keep current indentation of the table when formatting
+- Avoid flicker during navigation without change
+- Support insert a column left to the current position
+- Toggle the table mode using the status item
+- Gherkin feature file support
+- Column deletion command
+- Implemented an EBNF parser to support special characters
 - Fixed tests when run from command line.
 
 ## [0.1.5] - 2018-05-03
@@ -89,8 +100,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.0.1] - 2018-03-24
 
 - Initial release
-
-[1.1.0]: https://github.com/philipparndt/vscode-markdown-tables/releases/tag/1.1.0-b1
 [0.1.5]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.1.0...v0.1.5
 [0.1.0]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.9...v0.1.0
 [0.0.9]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.8...v0.0.9

@@ -15,7 +15,10 @@ jobs:
         uses: actions/setup-node@v2-beta
         with:
           node-version: '12'
-         
+      
+      - name: Check changelog
+        run: ./.github/workflows/checkChangeLog.sh
+
       - id: project-version
         name: Get Renovate version
         run: |
