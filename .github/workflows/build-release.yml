@@ -21,6 +21,8 @@ jobs:
         run: |
           ./.github/workflows/checkChangeLog.sh
           changes=$(./.github/workflows/getChanges.sh)
+          echo "Changes:"
+          echo $changes
           echo "::set-output name=changes::$changes"
 
       - id: project-version
