@@ -1,15 +1,15 @@
 {
-    "name": "vscode-text-tables",
-    "displayName": "Text Tables",
-    "description": "Work with text tables without pain",
-    "version": "0.1.11",
+    "name": "vscode-markdown-table",
+    "displayName": "Markdown Tables",
+    "description": "Create, modify and format markdown tables",
+    "version": "1.1.0",
     "icon": "icons/icon.png",
     "preview": false,
-    "publisher": "RomanPeshkov",
+    "publisher": "pharndt",
     "license": "SEE LICENSE IN LICENSE",
     "repository": {
         "type": "git",
-        "url": "https://github.com/rpeshkov/vscode-text-tables"
+        "url": "https://github.com/philipparndt/vscode-markdown-tables"
     },
     "engines": {
         "vscode": "^1.51.0"
@@ -19,8 +19,6 @@
         "Other"
     ],
     "keywords": [
-        "org-mode",
-        "org",
         "tables",
         "markdown"
     ],
@@ -37,70 +35,70 @@
         "commands": [
             {
                 "command": "text-tables.enable",
-                "title": "Text Tables: Enable"
+                "title": "Markdown Tables: Enable"
             },
             {
                 "command": "text-tables.formatUnderCursor",
-                "title": "Text Tables: Format under cursor"
+                "title": "Markdown Tables: Format under cursor"
             },
             {
                 "command": "text-tables.tableModeOn",
-                "title": "Text Tables: Enter table mode"
+                "title": "Markdown Tables: Enter table mode"
             },
             {
                 "command": "text-tables.tableModeOff",
-                "title": "Text Tables: Exit table mode"
+                "title": "Markdown Tables: Exit table mode"
             },
             {
                 "command": "text-tables.gotoNextCell",
-                "title": "Text Tables: Go to next cell"
+                "title": "Markdown Tables: Go to next cell"
             },
             {
                 "command": "text-tables.gotoPreviousCell",
-                "title": "Text Tables: Go to previous cell"
+                "title": "Markdown Tables: Go to previous cell"
             },
             {
                 "command": "text-tables.createTable",
-                "title": "Text Tables: Create table"
+                "title": "Markdown Tables: Create table"
             },
             {
                 "command": "text-tables.clearCell",
-                "title": "Text Tables: Clear cell"
+                "title": "Markdown Tables: Clear cell"
             },
             {
                 "command": "text-tables.moveRowDown",
                 "title": "Move row down",
-                "category": "Text Tables"
+                "category": "Markdown Tables"
             },
             {
                 "command": "text-tables.moveRowUp",
                 "title": "Move row up",
-                "category": "Text Tables"
+                "category": "Markdown Tables"
             },
             {
                 "command": "text-tables.moveColRight",
                 "title": "Move column right",
-                "category": "Text Tables"
+                "category": "Markdown Tables"
             },
             {
                 "command": "text-tables.moveColLeft",
                 "title": "Move column left",
-                "category": "Text Tables"
+                "category": "Markdown Tables"
             },
             {
                 "command": "text-tables.createColLeft",
                 "title": "Create column left to",
-                "category": "Text Tables"
+                "category": "Markdown Tables"
             },
             {
                 "command": "text-tables.deleteColumn",
                 "title": "Delete column",
-                "category": "Text Tables"
+                "category": "Markdown Tables"
             },
             {
                 "command": "text-tables.nextRow",
                 "title": "Next row",
-                "category": "Text Tables"
+                "category": "Markdown Tables"
             }
         ],
         "configuration": {
