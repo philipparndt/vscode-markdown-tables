@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+# [1.1.1] - 2021-03-13
+
+- Optimized release build
+- Dependency updates
+
 # [1.1.0] - 2021-03-13
 [1.1.0]: https://github.com/philipparndt/vscode-markdown-tables/releases/tag/1.1.0-b1
 
