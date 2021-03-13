@@ -211,7 +211,7 @@
         "mocha": "7.2.0",
         "typescript": "3.9.7",
         "vsce": "1.81.1",
-        "vscode-test": "1.4.1"
+        "vscode-test": "1.5.1"
     },
     "dependencies": {
         "ebnf": "^1.9.0"
