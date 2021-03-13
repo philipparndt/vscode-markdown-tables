@@ -2,7 +2,7 @@
 ## Publish new version
 
 - Update version in `package.json`
-- Update version in `build-release.yml`
+- Add release info in `./CHANGELOG.md`
 - Execute `build-release`
 
 ## Renew VSCE token
