@@ -19,7 +19,7 @@ jobs:
       - id: project-version
         name: Get Renovate version
         run: |
-          version=$(./github/workflows/getVersion.sh)
+          version=$(./.github/workflows/getVersion.sh)
           suffix=b${{ github.run_number }}
           echo "::set-output name=version::$version"
           echo "::set-output name=release::$version-$suffix"
