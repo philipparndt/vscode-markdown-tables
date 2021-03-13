@@ -7,7 +7,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      RELEASE_VERSION: 1.1.0-b${{ github.run_number }}
+      RELEASE_VERSION: 1.1.1-b${{ github.run_number }}
 
     steps:
       - name: Checkout
@@ -55,3 +55,9 @@ jobs:
           asset_path: ./vscode-text-tables-${{env.RELEASE_VERSION}}.vsix
           asset_name: vscode-text-tables-${{env.RELEASE_VERSION}}.vsix
           asset_content_type: application/vsix
+
+      - uses: lannonbr/vsce-action@master
+        with:
+          args: "publish -p $VSCE_TOKEN"
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
