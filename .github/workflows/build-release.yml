@@ -64,8 +64,8 @@ jobs:
           asset_name: vscode-markdown-table-${{steps.project-version.outputs.version}}.vsix
           asset_content_type: application/vsix
 
-      #- uses: lannonbr/vsce-action@master
-      #  with:
-      #    args: "publish -p $VSCE_TOKEN"
-      #  env:
-      #    VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+      - uses: lannonbr/vsce-action@master
+        with:
+          args: "publish -p $VSCE_TOKEN"
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
