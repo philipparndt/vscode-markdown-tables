@@ -16,11 +16,15 @@ jobs:
         with:
           node-version: '12'
       
-      - name: Check changelog
-        run: ./.github/workflows/checkChangeLog.sh
+      - id: changelog
+        name: Check changelog
+        run: |
+          ./.github/workflows/checkChangeLog.sh
+          changes=$(./.github/workflows/getChanges.sh)
+          echo "::set-output name=changes::$changes"
 
       - id: project-version
-        name: Get Renovate version
+        name: Get project version
         run: |
           version=$(./.github/workflows/getVersion.sh)
           suffix=b${{ github.run_number }}
@@ -48,7 +52,7 @@ jobs:
           release_name: ${{steps.project-version.outputs.release}}
           body: |
             Changes in this Release
-              - ...
+            ${{ steps.changelog.outputs.changes }}
 
           draft: false
           prerelease: true
@@ -65,6 +69,7 @@ jobs:
           asset_content_type: application/vsix
 
       - uses: lannonbr/vsce-action@2.0.0
+        if: false
         with:
           args: "publish -p $VSCE_TOKEN"
         env:
