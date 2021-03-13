@@ -90,7 +90,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Initial release
 
-[Unreleased]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.1.5...HEAD
+[1.1.0]: https://github.com/philipparndt/vscode-markdown-tables/releases/tag/1.1.0-b1
 [0.1.5]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.1.0...v0.1.5
 [0.1.0]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.9...v0.1.0
 [0.0.9]: https://github.com/rpeshkov/vscode-text-tables/compare/v0.0.8...v0.0.9
