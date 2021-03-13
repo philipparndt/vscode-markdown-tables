@@ -71,7 +71,6 @@ jobs:
           asset_content_type: application/vsix
 
       - uses: lannonbr/vsce-action@2.0.0
-        if: false
         with:
           args: "publish -p $VSCE_TOKEN"
         env:
