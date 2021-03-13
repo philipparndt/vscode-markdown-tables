@@ -209,7 +209,7 @@
         "eslint": "6.8.0",
         "glob": "7.1.6",
         "mocha": "7.2.0",
-        "typescript": "3.9.7",
+        "typescript": "3.9.9",
         "vsce": "1.81.1",
         "vscode-test": "1.4.1"
     },
