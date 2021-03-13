@@ -6,8 +6,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      RELEASE_VERSION: 1.1.1-b${{ github.run_number }}
 
     steps:
       - name: Checkout
@@ -18,10 +16,17 @@ jobs:
         with:
           node-version: '12'
          
-      - name: Build
+      - id: project-version
+        name: Get Renovate version
+        run: |
+          version=$(./github/workflows/getVersion.sh)
+          suffix=b${{ github.run_number }}
+          echo "::set-output name=version::$version"
+          echo "::set-output name=release::$version-$suffix"
+
+      - name: Build ${{ steps.project-version.outputs.release }}
         run: |
           rm package-lock.json
-          npm --no-git-tag-version version ${{env.RELEASE_VERSION}}
           npm install
           npm run package
     
@@ -36,8 +41,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{env.RELEASE_VERSION}}
-          release_name: ${{env.RELEASE_VERSION}}
+          tag_name: ${{steps.project-version.outputs.version}}
+          release_name: ${{steps.project-version.outputs.release}}
           body: |
             Changes in this Release
               - ...
@@ -52,12 +57,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./vscode-text-tables-${{env.RELEASE_VERSION}}.vsix
-          asset_name: vscode-text-tables-${{env.RELEASE_VERSION}}.vsix
+          asset_path: ./vscode-text-tables-${{steps.project-version.outputs.version}}.vsix
+          asset_name: vscode-text-tables-${{steps.project-version.outputs.version}}.vsix
           asset_content_type: application/vsix
 
-      - uses: lannonbr/vsce-action@master
-        with:
-          args: "publish -p $VSCE_TOKEN"
-        env:
-          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+      #- uses: lannonbr/vsce-action@master
+      #  with:
+      #    args: "publish -p $VSCE_TOKEN"
+      #  env:
+      #    VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
