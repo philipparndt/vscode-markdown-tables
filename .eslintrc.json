@@ -14,7 +14,7 @@
         "eqeqeq": "warn",
         "no-throw-literal": "warn",
         "quotes": ["error", "single"],
-        "semi": ["off"],
+        "semi": ["error", "never"],
         "no-unexpected-multiline": "error",
         "camelcase": "off",
         "@typescript-eslint/naming-convention": [
