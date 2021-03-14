@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+# 1.2.0 - 2021-03-14
+
+- Removed `Org` mode. The parser lacks some features (e.g. escaping), and I don't plan to test and use this.
+- Fixed a rare issue while jumping through the table.
+
 # 1.1.1 - 2021-03-13
 
 - Optimized release build
