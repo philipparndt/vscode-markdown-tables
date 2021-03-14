@@ -20,7 +20,7 @@ export class MarkdownParser implements tt.Parser {
         result.prefix = findTablePrefix(text, verticalSeparator)
 
         const lines = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator))
-    
+
         for (const line of lines) {
             parseRelaxed(line, result)
         }
@@ -38,7 +38,7 @@ export class MarkdownParser implements tt.Parser {
 
     getAlignment(column: string): tt.Alignment {
         const trimmed = column.trim()
-        
+
         const end = trimmed.endsWith(':')
         const start = trimmed.startsWith(':')
 
@@ -157,7 +157,7 @@ function parseRelaxed(text: string, table: tt.Table): boolean {
 
 function parse(parser: Parser, textLine: string, table: tt.Table): boolean {
     const ast = parser.getAST(textLine)
-    if (!ast || !ast.errors || ast.errors.length !== 0) {
+    if (!ast || !ast.errors || ast.errors.length !== 0) {
         return false
     }
 
@@ -189,8 +189,8 @@ function getCellContent(row: IToken) {
     }
 
     const borders = row.children
-    .filter(child => child.type === 'CellBorder')
-    .length
+        .filter(child => child.type === 'CellBorder')
+        .length
 
     for (let i = cells.length; i < borders; i++) {
         cells.push('')

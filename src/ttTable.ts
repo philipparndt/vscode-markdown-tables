@@ -98,6 +98,7 @@ export class Table {
 
 export interface Parser {
     parse(text: string): Table | undefined
+
     isSeparatorRow(text: string): boolean
 }
 
@@ -110,11 +111,16 @@ export interface Locator {
 }
 
 export interface LineReader {
-    lineAt(line: number): vscode.TextLine
     lineCount: number
+
+    lineAt(line: number): vscode.TextLine
 }
 
 class JumpPosition {
+    range: vscode.Range
+    next?: JumpPosition
+    prev?: JumpPosition
+
     constructor(start: vscode.Position, end: vscode.Position, public rowType: RowType, prev?: JumpPosition) {
         this.range = new vscode.Range(start, end)
 
@@ -123,10 +129,6 @@ class JumpPosition {
             this.prev = prev
         }
     }
-
-    range: vscode.Range
-    next?: JumpPosition
-    prev?: JumpPosition
 }
 
 export class TableNavigator {

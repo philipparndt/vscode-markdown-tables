@@ -101,7 +101,7 @@ export async function moveColRight(editor: vscode.TextEditor, range: vscode.Rang
         return
     }
 
-    if (rowCol.col >= table.cols.length - 1 ) {
+    if (rowCol.col >= table.cols.length - 1) {
         return
     }
 
@@ -231,7 +231,7 @@ export async function nextRow(editor: vscode.TextEditor, range: vscode.Range, ta
     }
 
     await editor.edit(b => b.replace(range, stringifier.stringify(table, editor.document.eol)))
-    
+
     const nav = new TableNavigator(table)
     const nextRowPos = nav.nextRow(start)
     if (nextRowPos) {
