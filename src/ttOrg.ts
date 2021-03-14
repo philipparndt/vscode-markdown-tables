@@ -1,86 +1,86 @@
-import * as tt from './ttTable';
-import * as vscode from 'vscode';
-import { convertEOL, findTablePrefix } from './utils';
+import * as tt from './ttTable'
+import * as vscode from 'vscode'
+import { convertEOL, findTablePrefix } from './utils'
 
-const verticalSeparator = '|';
-const horizontalSeparator = '-';
-const intersection = '+';
+const verticalSeparator = '|'
+const horizontalSeparator = '-'
+const intersection = '+'
 
-type StringReducer = (previous: string, current: string, index: number) => string;
+type StringReducer = (previous: string, current: string, index: number) => string
 
 export class OrgParser implements tt.Parser {
     parse(text: string): tt.Table | undefined {
         if (!text || text.length === 0) {
-            return undefined;
+            return undefined
         }
 
-        const result = new tt.Table();
-        result.prefix = findTablePrefix(text, verticalSeparator);
+        const result = new tt.Table()
+        result.prefix = findTablePrefix(text, verticalSeparator)
 
-        const strings = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator));
+        const strings = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator))
 
         for (const s of strings) {
             if (this.isSeparatorRow(s)) {
-                result.addRow(tt.RowType.Separator, []);
-                continue;
+                result.addRow(tt.RowType.separator, [])
+                continue
             }
 
-            const lastIndex = s.length - (s.endsWith(verticalSeparator) ? 1 : 0);
+            const lastIndex = s.length - (s.endsWith(verticalSeparator) ? 1 : 0)
             const values = s
                 .slice(1, lastIndex)
                 .split(verticalSeparator)
-                .map(x => x.trim());
+                .map(x => x.trim())
 
-            result.addRow(tt.RowType.Data, values);
+            result.addRow(tt.RowType.data, values)
         }
 
-        return result;
+        return result
     }
 
     isSeparatorRow(text: string): boolean {
-        return text.length > 1 && text[1] === horizontalSeparator && text.match(/^[+|-\s]+$/) ? true : false;;
+        return text.length > 1 && text[1] === horizontalSeparator && text.match(/^[+|-\s]+$/) ? true : false
     }
 }
 
 export class OrgStringifier implements tt.Stringifier {
-    private reducers = new Map([
-        [tt.RowType.Data, this.dataRowReducer],
-        [tt.RowType.Separator, this.separatorReducer],
-    ]);
+    private _reducers = new Map([
+        [tt.RowType.data, this._dataRowReducer],
+        [tt.RowType.separator, this._separatorReducer],
+    ])
 
     stringify(table: tt.Table, eol: vscode.EndOfLine): string {
-        const result = [];
+        const result = []
 
         for (let i = 0; i < table.rows.length; ++i) {
-            let rowString = table.prefix;
-            const rowData = table.getRow(i);
-            const reducer = this.reducers.get(table.rows[i].type);
+            let rowString = table.prefix
+            const rowData = table.getRow(i)
+            const reducer = this._reducers.get(table.rows[i].type)
             if (reducer) {
-                rowString += rowData.reduce(reducer(table.cols), verticalSeparator);
+                rowString += rowData.reduce(reducer(table.cols), verticalSeparator)
             }
 
-            result.push(rowString);
+            result.push(rowString)
         }
 
-        return result.join(convertEOL(eol));
+        return result.join(convertEOL(eol))
     }
 
-    private dataRowReducer(cols: tt.ColDef[]): StringReducer {
+    private _dataRowReducer(cols: tt.ColDef[]): StringReducer {
         return (prev, cur, idx) => {
-            const pad = ' '.repeat(cols[idx].width - cur.length + 1);
-            return prev + ' ' + cur + pad + verticalSeparator;
-        };
+            const pad = ' '.repeat(cols[idx].width - cur.length + 1)
+            return prev + ' ' + cur + pad + verticalSeparator
+        }
     }
 
-    private separatorReducer(cols: tt.ColDef[]): (p: string, c: string, i: number) => string {
+    private _separatorReducer(cols: tt.ColDef[]): (p: string, c: string, i: number) => string {
         return (prev, _, idx) => {
             // Intersections for each cell are '+', except the last one, where it should be '|'
             const ending = (idx === cols.length - 1)
                 ? verticalSeparator
-                : intersection;
+                : intersection
 
-            return prev + horizontalSeparator.repeat(cols[idx].width + 2) + ending;
-        };
+            return prev + horizontalSeparator.repeat(cols[idx].width + 2) + ending
+        }
     }
 }
 
@@ -97,31 +97,31 @@ export class OrgLocator implements tt.Locator {
         // Checks that line starts with vertical bar
         const isTableLikeString = (ln: number) => {
             if (ln < 0 || ln >= reader.lineCount) {
-                return false;
+                return false
             }
-            const line = reader.lineAt(ln);
-            const firstCharIdx = line.firstNonWhitespaceCharacterIndex;
-            const firstChar = line.text[firstCharIdx];
-            return firstChar === '|';
-        };
-
-        let start = lineNr;
-        while (isTableLikeString(start)) {
-            start--;
+            const line = reader.lineAt(ln)
+            const firstCharIdx = line.firstNonWhitespaceCharacterIndex
+            const firstChar = line.text[firstCharIdx]
+            return firstChar === '|'
         }
 
-        let end = lineNr;
+        let start = lineNr
+        while (isTableLikeString(start)) {
+            start--
+        }
+
+        let end = lineNr
         while (isTableLikeString(end)) {
-            end++;
+            end++
         }
 
         if (start === end) {
-            return undefined;
+            return undefined
         }
 
-        const startPos = reader.lineAt(start + 1).range.start;
-        const endPos = reader.lineAt(end - 1).range.end;
+        const startPos = reader.lineAt(start + 1).range.start
+        const endPos = reader.lineAt(end - 1).range.end
 
-        return new vscode.Range(startPos, endPos);
+        return new vscode.Range(startPos, endPos)
     }
 }
