@@ -115,10 +115,10 @@ class Context {
     }
 
     setState(isEnabled: boolean) {
-        vscode.commands.executeCommand('setContext', this._title, isEnabled)
+        vscode.commands.executeCommand('setContext', this._type, isEnabled)
         if (this._statusItem) {
             const stateText = isEnabled ? '$(check)' : '$(x)'
-            this._statusItem.text = `${this._type} ${stateText}`
+            this._statusItem.text = `${this._title} ${stateText}`
         }
     }
 }
