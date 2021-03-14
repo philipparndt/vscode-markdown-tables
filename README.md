@@ -78,7 +78,6 @@ This extension introduces some settings that you may setup in your user settings
 
 Available settings:
 
-- `text-tables.mode` - sets the type of tables. Valid values are: `org` and `markdown`.
 - `text-tables.showStatus` - controls whether to show or not status item for table mode.
 
 ## Fork information

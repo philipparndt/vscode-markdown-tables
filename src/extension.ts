@@ -3,7 +3,6 @@
 import * as vscode from 'vscode'
 import * as utils from './utils'
 import * as cmd from './commands'
-import { OrgLocator, OrgParser, OrgStringifier } from './ttOrg'
 import { Locator, Parser, Stringifier, Table } from './ttTable'
 import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdown'
 import { isUndefined } from 'util'
@@ -18,16 +17,9 @@ let configuration: cfg.Configuration
 function loadConfiguration() {
     configuration = cfg.build()
 
-    if (configuration.mode === cfg.Mode.org) {
-        locator = new OrgLocator()
-        parser = new OrgParser()
-        stringifier = new OrgStringifier()
-    }
-    else {
-        locator = new MarkdownLocator()
-        parser = new MarkdownParser()
-        stringifier = new MarkdownStringifier()
-    }
+    locator = new MarkdownLocator()
+    parser = new MarkdownParser()
+    stringifier = new MarkdownStringifier()
 }
 
 export function activate(ctx: vscode.ExtensionContext) {
