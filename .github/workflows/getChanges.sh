@@ -2,4 +2,4 @@
 cd "$(dirname "$0")"
 
 CHANGES=$(node ./getChanges.js)
-echo $CHANGES
+echo "$CHANGES"
