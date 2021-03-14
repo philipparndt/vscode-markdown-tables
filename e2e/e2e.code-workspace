@@ -5,5 +5,7 @@
 		}
 	],
 	"settings": {
+		"text-tables.mode": "markdown",
+		"text-tables.showStatus": true
 	}
 }

@@ -24,7 +24,6 @@
     ],
     "activationEvents": [
         "onLanguage:markdown",
-        "onLanguage:org",
         "onLanguage:cucumber",
         "onLanguage:gherkin",
         "onLanguage:feature",
@@ -105,16 +104,6 @@
             "type": "object",
             "title": "Text Tables configuration",
             "properties": {
-                "text-tables.mode": {
-                    "type": "string",
-                    "enum": [
-                        "markdown",
-                        "org"
-                    ],
-                    "default": "markdown",
-                    "description": "Sets the mode in which extension should work",
-                    "scope": "window"
-                },
                 "text-tables.showStatus": {
                     "type": "boolean",
                     "default": true,
