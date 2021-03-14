@@ -25,7 +25,7 @@ export class MarkdownParser implements tt.Parser {
             parseRelaxed(line, result);
         }
 
-        if (result.rows.some(x => x.type === RowType.Separator)) {
+        if (result.rows.some(x => x.type === RowType.separator)) {
             result.cols.forEach(x => x.width = Math.max(x.width, 3));
         }
 
@@ -43,34 +43,37 @@ export class MarkdownParser implements tt.Parser {
         const start = trimmed.startsWith(':');
 
         if (end && start) {
-            return tt.Alignment.Center;
-        } else if (end) {
-            return tt.Alignment.Right;
-        } else if (start) {
-            return tt.Alignment.Left;
-        } else {
-            return tt.Alignment.Left; // Should be default
+            return tt.Alignment.center;
+        }
+        else if (end) {
+            return tt.Alignment.right;
+        }
+        else if (start) {
+            return tt.Alignment.left;
+        }
+        else {
+            return tt.Alignment.left; // Should be default
         }
     }
 }
 
 export class MarkdownStringifier implements tt.Stringifier {
-    private reducers = new Map([
-        [tt.RowType.Data, this.dataRowReducer],
-        [tt.RowType.Separator, this.separatorReducer],
+    private _reducers = new Map([
+        [tt.RowType.data, this._dataRowReducer],
+        [tt.RowType.separator, this._separatorReducer],
     ]);
 
     stringify(table: tt.Table, eol: vscode.EndOfLine): string {
         const result = [];
 
-        if (table.rows.some(x => x.type === RowType.Separator)) {
+        if (table.rows.some(x => x.type === RowType.separator)) {
             table.cols.forEach(x => x.width = Math.max(x.width, 3));
         }
 
         for (let i = 0; i < table.rows.length; ++i) {
             let rowString = table.prefix;
             const rowData = table.getRow(i);
-            const reducer = this.reducers.get(table.rows[i].type);
+            const reducer = this._reducers.get(table.rows[i].type);
             if (reducer) {
                 rowString += rowData.reduce(reducer(table.cols), verticalSeparator);
             }
@@ -80,19 +83,19 @@ export class MarkdownStringifier implements tt.Stringifier {
         return result.join(convertEOL(eol));
     }
 
-    private dataRowReducer(cols: tt.ColDef[]): StringReducer {
+    private _dataRowReducer(cols: tt.ColDef[]): StringReducer {
         return (prev, cur, idx) => {
             const pad = ' '.repeat(cols[idx].width - cur.length + 1);
             return prev + ' ' + cur + pad + verticalSeparator;
         };
     }
 
-    private separatorReducer(cols: tt.ColDef[]): StringReducer {
+    private _separatorReducer(cols: tt.ColDef[]): StringReducer {
         return (prev, _, idx) => {
-            const begin = cols[idx].alignment === tt.Alignment.Center
+            const begin = cols[idx].alignment === tt.Alignment.center
                 ? ':-'
                 : ' -';
-            const ending = cols[idx].alignment !== tt.Alignment.Left
+            const ending = cols[idx].alignment !== tt.Alignment.left
                 ? '-:' + verticalSeparator
                 : '- ' + verticalSeparator;
 
@@ -164,9 +167,10 @@ function parse(parser: Parser, textLine: string, table: tt.Table): boolean {
         const cells = getCellContent(row);
 
         if (isSeparatorRowForColumns(cells)) {
-            table.addRow(tt.RowType.Separator, cells);
-        } else {
-            table.addRow(tt.RowType.Data, cells);
+            table.addRow(tt.RowType.separator, cells);
+        }
+        else {
+            table.addRow(tt.RowType.data, cells);
         }
     }
 
@@ -178,7 +182,8 @@ function getCellContent(row: IToken) {
     for (const cell of row.children) {
         if (cell.type === 'EmptyCell') {
             cells.push('');
-        } else if (cell.type === 'Cell') {
+        }
+        else if (cell.type === 'Cell') {
             cells.push(cell.children[0].text.trim());
         }
     }

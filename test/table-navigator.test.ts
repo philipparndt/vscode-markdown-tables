@@ -8,11 +8,11 @@ suite('TableNavigator', () => {
 
     setup(() => {
         table = new Table();
-        table.addRow(RowType.Data, ['Column 1', 'Column 2']);
-        table.addRow(RowType.Separator, ['', '']);
-        table.addRow(RowType.Data, ['1', '2']);
-        table.addRow(RowType.Data, ['3', '4']);
-        table.addRow(RowType.Separator, ['', '']);
+        table.addRow(RowType.data, ['Column 1', 'Column 2']);
+        table.addRow(RowType.separator, ['', '']);
+        table.addRow(RowType.data, ['1', '2']);
+        table.addRow(RowType.data, ['3', '4']);
+        table.addRow(RowType.separator, ['', '']);
 
         navigator = new TableNavigator(table);
     });

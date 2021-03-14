@@ -32,7 +32,7 @@ suite('Commands', () => {
         | blah blah | this is some text |`;
         
         await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
-            await cfg.override({mode: cfg.Mode.Markdown});
+            await cfg.override({mode: cfg.Mode.markdown});
             move(editor, 0, 10);
             await vscode.commands.executeCommand('text-tables.gotoNextCell');
 
@@ -50,7 +50,7 @@ suite('Commands', () => {
 | -1 | -1 |`;
         
         await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
-            await cfg.override({mode: cfg.Mode.Markdown});
+            await cfg.override({mode: cfg.Mode.markdown});
             move(editor, 0, 1);
             await vscode.commands.executeCommand('text-tables.gotoNextCell');
 
@@ -67,7 +67,7 @@ suite('Commands', () => {
 | -1 | -1 |`;
         
         await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
-            await cfg.override({mode: cfg.Mode.Org});
+            await cfg.override({mode: cfg.Mode.org});
             move(editor, 0, 1);
             await vscode.commands.executeCommand('text-tables.gotoNextCell');
 
@@ -81,7 +81,7 @@ suite('Commands', () => {
 |     |     |`;
 
         await inTextEditor({language: 'markdown'}, async (editor, document) => {
-            await cfg.override({'mode': cfg.Mode.Markdown});
+            await cfg.override({'mode': cfg.Mode.markdown});
             await cmd.createTable(2, 2, editor, new MarkdownStringifier());
             assertDocumentText(document, expectedResult);
         });
@@ -93,7 +93,7 @@ suite('Commands', () => {
 |  |  |`;
 
         await inTextEditor({language: 'org'}, async (editor, document) => {
-            await cfg.override({'mode': cfg.Mode.Org});
+            await cfg.override({'mode': cfg.Mode.org});
             await cmd.createTable(2, 2, editor, new OrgStringifier());
             assertDocumentText(document, expectedResult);
         });
@@ -104,8 +104,8 @@ suite('Commands', () => {
 `| Hello | World | Some other text
 | ----- | ----- |`;
         const expectedResult =
-`|       | World |                \n` +
-`| ----- | ----- |`;
+'|       | World |                \n' +
+'| ----- | ----- |';
 
         await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
             await cfg.override({mode: 'markdown'});

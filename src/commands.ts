@@ -7,9 +7,9 @@ import { Table, RowType, Stringifier, TableNavigator, Parser } from './ttTable';
 export async function createTable(rowsCount: number, colsCount: number, editor: vscode.TextEditor, stringifier: Stringifier) {
     const table = new Table();
     for (let i = 0; i < rowsCount + 1; i++) {
-        table.addRow(RowType.Data, new Array(colsCount).fill(''));
+        table.addRow(RowType.data, new Array(colsCount).fill(''));
     }
-    table.rows[1].type = RowType.Separator;
+    table.rows[1].type = RowType.separator;
 
     const currentPosition = editor.selection.start;
     await editor.edit(b => b.insert(currentPosition, stringifier.stringify(table, editor.document.eol)));
@@ -49,8 +49,9 @@ export async function gotoNextCell(editor: vscode.TextEditor, range: vscode.Rang
     if (newPos) {
         await formatUnderCursor(editor, range, table, stringifier);
         editor.selection = new vscode.Selection(newPos, newPos);
-    } else {
-        table.addRow(RowType.Data, new Array(table.cols.length).fill(''));
+    }
+    else {
+        table.addRow(RowType.data, new Array(table.cols.length).fill(''));
         await gotoNextCell(editor, range, table, stringifier);
     }
 }
@@ -226,7 +227,7 @@ export async function nextRow(editor: vscode.TextEditor, range: vscode.Range, ta
     const start = editor.selection.start;
 
     if (inLastRow) {
-        table.addRow(RowType.Data, new Array(table.cols.length).fill(''));
+        table.addRow(RowType.data, new Array(table.cols.length).fill(''));
     }
 
     await editor.edit(b => b.replace(range, stringifier.stringify(table, editor.document.eol)));

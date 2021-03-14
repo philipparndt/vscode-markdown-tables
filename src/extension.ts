@@ -18,11 +18,12 @@ let configuration: cfg.Configuration;
 function loadConfiguration() {
     configuration = cfg.build();
 
-    if (configuration.mode === cfg.Mode.Org) {
+    if (configuration.mode === cfg.Mode.org) {
         locator = new OrgLocator();
         parser = new OrgParser();
         stringifier = new OrgStringifier();
-    } else {
+    }
+    else {
         locator = new MarkdownLocator();
         parser = new MarkdownParser();
         stringifier = new MarkdownStringifier();
@@ -31,12 +32,12 @@ function loadConfiguration() {
 
 export function activate(ctx: vscode.ExtensionContext) {
     loadConfiguration();
-    registerContext(ContextType.InTable, 'Cursor in table');
-    registerContext(ContextType.PotentiallyInTable, 'Cursor potentially in table');
+    registerContext(ContextType.inTable, 'Cursor in table');
+    registerContext(ContextType.potentiallyInTable, 'Cursor potentially in table');
 
     const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
 
-    registerContext(ContextType.TableMode, 'Table', statusItem);
+    registerContext(ContextType.tableMode, 'Table', statusItem);
     statusItem.command = 'text-tables.tableModeToggle';
 
     if (configuration.showStatus) {
@@ -48,7 +49,8 @@ export function activate(ctx: vscode.ExtensionContext) {
 
         if (configuration.showStatus) {
             statusItem.show();
-        } else {
+        }
+        else {
             statusItem.hide();
         }
     });
@@ -64,11 +66,11 @@ export function activate(ctx: vscode.ExtensionContext) {
     }));
 
     ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.tableModeOn',
-        (e) => enterContext(e, ContextType.TableMode)));
+        (e) => enterContext(e, ContextType.tableMode)));
     ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.tableModeOff',
-        (e) => exitContext(e, ContextType.TableMode)));
+        (e) => exitContext(e, ContextType.tableMode)));
     ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.tableModeToggle',
-        (e) => toggleContext(e, ContextType.TableMode)));
+        (e) => toggleContext(e, ContextType.tableMode)));
 
     ctx.subscriptions.push(registerTableCommand('text-tables.moveRowDown', cmd.moveRowDown, {format: true}));
     ctx.subscriptions.push(registerTableCommand('text-tables.moveRowUp', cmd.moveRowUp, {format: true}));

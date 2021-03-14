@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 
 export enum ContextType {
-    TableMode = 'tableMode',
-    PotentiallyInTable = 'potentiallyInTable',
-    InTable = 'inTable'
+    tableMode = 'tableMode',
+    potentiallyInTable = 'potentiallyInTable',
+    inTable = 'inTable'
 }
 
 const contexts: Map<ContextType, Context> = new Map();
@@ -39,9 +39,10 @@ export function exitContext(editor: vscode.TextEditor, type: ContextType) {
 
 export function toggleContext(editor: vscode.TextEditor, type: ContextType) {
     const editorState = state.get(editor.document.fileName) || [];
-    if (editorState.indexOf(ContextType.TableMode) >= 0) {
+    if (editorState.indexOf(ContextType.tableMode) >= 0) {
         exitContext(editor, type);
-    } else {
+    }
+    else {
         enterContext(editor, type);
     }
 }
@@ -66,15 +67,17 @@ export function updateSelectionContext(): void {
         const inTable = selectionInTable(editor);
 
         if (selectionInTable(editor)) {
-            enterContext(editor, ContextType.InTable);
-        } else {
-            exitContext(editor, ContextType.InTable);
+            enterContext(editor, ContextType.inTable);
+        }
+        else {
+            exitContext(editor, ContextType.inTable);
         }
 
         if (inTable || selectionPotentiallyInTable(editor)) {
-            enterContext(editor, ContextType.PotentiallyInTable);
-        } else {
-            exitContext(editor, ContextType.PotentiallyInTable);
+            enterContext(editor, ContextType.potentiallyInTable);
+        }
+        else {
+            exitContext(editor, ContextType.potentiallyInTable);
         }
     }
 }
@@ -107,15 +110,15 @@ function selectionPotentiallyInTable(editor: vscode.TextEditor): boolean {
 }
 
 class Context {
-    constructor(private type: ContextType, private title: string, private statusItem?: vscode.StatusBarItem) {
+    constructor(private _type: ContextType, private _title: string, private _statusItem?: vscode.StatusBarItem) {
 
     }
 
     setState(isEnabled: boolean) {
-        vscode.commands.executeCommand('setContext', this.type, isEnabled);
-        if (this.statusItem) {
+        vscode.commands.executeCommand('setContext', this._title, isEnabled);
+        if (this._statusItem) {
             const stateText = isEnabled ? '$(check)' : '$(x)';
-            this.statusItem.text = `${this.title} ${stateText}`;
+            this._statusItem.text = `${this._type} ${stateText}`;
         }
     }
 }

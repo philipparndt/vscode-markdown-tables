@@ -23,7 +23,7 @@ suite('Text tables. Org', () => {
             const table = parser.parse('|');
             if (table !== undefined) {
                 assert.equal(table.rows.length, 1);
-                assert.equal(table.rows[0].type, RowType.Data);
+                assert.equal(table.rows[0].type, RowType.data);
                 assert.equal(table.cols.length, 1);
             }
         });
@@ -33,7 +33,7 @@ suite('Text tables. Org', () => {
             assert.notEqual(table, undefined);
             if (table !== undefined) {
                 assert.equal(table.rows.length, 1);
-                assert.equal(table.rows[0].type, RowType.Separator);
+                assert.equal(table.rows[0].type, RowType.separator);
             }
         });
 

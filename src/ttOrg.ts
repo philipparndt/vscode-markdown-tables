@@ -21,7 +21,7 @@ export class OrgParser implements tt.Parser {
 
         for (const s of strings) {
             if (this.isSeparatorRow(s)) {
-                result.addRow(tt.RowType.Separator, []);
+                result.addRow(tt.RowType.separator, []);
                 continue;
             }
 
@@ -31,7 +31,7 @@ export class OrgParser implements tt.Parser {
                 .split(verticalSeparator)
                 .map(x => x.trim());
 
-            result.addRow(tt.RowType.Data, values);
+            result.addRow(tt.RowType.data, values);
         }
 
         return result;
@@ -43,9 +43,9 @@ export class OrgParser implements tt.Parser {
 }
 
 export class OrgStringifier implements tt.Stringifier {
-    private reducers = new Map([
-        [tt.RowType.Data, this.dataRowReducer],
-        [tt.RowType.Separator, this.separatorReducer],
+    private _reducers = new Map([
+        [tt.RowType.data, this._dataRowReducer],
+        [tt.RowType.separator, this._separatorReducer],
     ]);
 
     stringify(table: tt.Table, eol: vscode.EndOfLine): string {
@@ -54,7 +54,7 @@ export class OrgStringifier implements tt.Stringifier {
         for (let i = 0; i < table.rows.length; ++i) {
             let rowString = table.prefix;
             const rowData = table.getRow(i);
-            const reducer = this.reducers.get(table.rows[i].type);
+            const reducer = this._reducers.get(table.rows[i].type);
             if (reducer) {
                 rowString += rowData.reduce(reducer(table.cols), verticalSeparator);
             }
@@ -65,14 +65,14 @@ export class OrgStringifier implements tt.Stringifier {
         return result.join(convertEOL(eol));
     }
 
-    private dataRowReducer(cols: tt.ColDef[]): StringReducer {
+    private _dataRowReducer(cols: tt.ColDef[]): StringReducer {
         return (prev, cur, idx) => {
             const pad = ' '.repeat(cols[idx].width - cur.length + 1);
             return prev + ' ' + cur + pad + verticalSeparator;
         };
     }
 
-    private separatorReducer(cols: tt.ColDef[]): (p: string, c: string, i: number) => string {
+    private _separatorReducer(cols: tt.ColDef[]): (p: string, c: string, i: number) => string {
         return (prev, _, idx) => {
             // Intersections for each cell are '+', except the last one, where it should be '|'
             const ending = (idx === cols.length - 1)

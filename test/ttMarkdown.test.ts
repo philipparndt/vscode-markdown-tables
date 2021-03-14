@@ -23,7 +23,7 @@ suite('Text tables. Markdown', () => {
             const table = parser.parse('|');
             if (table !== undefined) {
                 assert.equal(table.rows.length, 1);
-                assert.equal(table.rows[0].type, RowType.Data);
+                assert.equal(table.rows[0].type, RowType.data);
                 assert.equal(table.cols.length, 1);
             }
         });
@@ -33,7 +33,7 @@ suite('Text tables. Markdown', () => {
             assert.notEqual(table, undefined);
             if (table !== undefined) {
                 assert.equal(table.rows.length, 1);
-                assert.equal(table.rows[0].type, RowType.Separator);
+                assert.equal(table.rows[0].type, RowType.separator);
             }
         });
 
@@ -42,7 +42,7 @@ suite('Text tables. Markdown', () => {
             assert.notEqual(table, undefined);
             if (table !== undefined) {
                 assert.equal(table.rows.length, 1);
-                assert.equal(table.rows[0].type, RowType.Separator);
+                assert.equal(table.rows[0].type, RowType.separator);
             }
         });
 
@@ -60,7 +60,7 @@ suite('Text tables. Markdown', () => {
                 assert.equal(table.cols.length, 2);
             }
             else {
-                assert.fail("table should be parsable")
+                assert.fail('table should be parsable')
             }
         });
     });

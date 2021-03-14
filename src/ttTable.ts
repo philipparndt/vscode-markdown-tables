@@ -1,15 +1,15 @@
 import * as vscode from 'vscode';
 
 export enum RowType {
-    Unknown,
-    Separator,
-    Data
+    unknown,
+    separator,
+    data
 }
 
 export enum Alignment {
-    Left,
-    Center,
-    Right
+    left,
+    center,
+    right
 }
 
 export interface RowDef {
@@ -35,15 +35,15 @@ export class Table {
     rows: RowDef[] = [];
     cols: ColDef[] = [];
 
-    private data: string[][] = [];
+    private _data: string[][] = [];
 
     addRow(type: RowType, values: string[]) {
         let adjustCount = values.length - this.cols.length;
         while (adjustCount-- > 0) {
-            this.cols.push({ alignment: Alignment.Left, width: 0 });
+            this.cols.push({ alignment: Alignment.left, width: 0 });
         }
 
-        for (const row of this.data) {
+        for (const row of this._data) {
             const adjustee = row.length < values.length ? row : values;
             adjustCount = Math.abs(row.length - values.length);
 
@@ -55,36 +55,36 @@ export class Table {
         this.cols.forEach((col, i) => col.width = Math.max(col.width, values[i].length));
 
         this.rows.push({ type });
-        this.data.push(values);
+        this._data.push(values);
     }
 
     deleteCol(index: number) {
         this.cols.splice(index, 1);
 
-        for (const row of this.data) {
+        for (const row of this._data) {
             row.splice(index, 1);
         }
     }
 
     addCol(index: number) {
         const newColumn = {
-            alignment: Alignment.Left,
+            alignment: Alignment.left,
             width: 0
         };
 
         this.cols.splice(index, 0, newColumn);
 
-        for (const row of this.data) {
+        for (const row of this._data) {
             row.splice(index, 0, '');
         }
     }
 
     getAt(row: number, col: number): string {
-        return this.data[row][col];
+        return this._data[row][col];
     }
 
     getRow(row: number): string[] {
-        return this.data[row];
+        return this._data[row];
     }
 
     setAt(row: number, col: number, value: string) {
@@ -92,7 +92,7 @@ export class Table {
             this.cols[col].width = value.length;
         }
 
-        this.data[row][col] = value;
+        this._data[row][col] = value;
     }
 }
 
@@ -130,32 +130,33 @@ class JumpPosition {
 }
 
 export class TableNavigator {
-    private jumpPositions: JumpPosition[] = [];
+    private _jumpPositions: JumpPosition[] = [];
 
     constructor(public table: Table) {
-        this.jumpPositions = this.buildJumpPositions();
+        this._jumpPositions = this._buildJumpPositions();
     }
 
     position(row: number, column: number): vscode.Position | undefined {
         const jumPosition = row * this.table.cols.length + column;
 
-        if (jumPosition >= this.jumpPositions.length) {
+        if (jumPosition >= this._jumpPositions.length) {
             return undefined;
-        } else {
-            return this.jumpPositions[jumPosition].range.start.translate(0, 1);
+        }
+        else {
+            return this._jumpPositions[jumPosition].range.start.translate(0, 1);
         }
     }
 
     nextCell(cursorPosition: vscode.Position): vscode.Position | undefined {
-        return this.jump(cursorPosition, x => x.next!);
+        return this._jump(cursorPosition, x => x.next!);
     }
 
     previousCell(cursorPosition: vscode.Position): vscode.Position | undefined {
-        return this.jump(cursorPosition, x => x.prev!);
+        return this._jump(cursorPosition, x => x.prev!);
     }
 
     nextRow(cursorPosition: vscode.Position): vscode.Position | undefined {
-        const nextRowJump = this.jumpPositions.find(x => x.range.contains(cursorPosition.translate(1)));
+        const nextRowJump = this._jumpPositions.find(x => x.range.contains(cursorPosition.translate(1)));
         if (!nextRowJump) {
             return undefined;
         }
@@ -163,8 +164,8 @@ export class TableNavigator {
         return nextRowJump.range.start.translate(0, 1);
     }
 
-    private jump(currentPosition: vscode.Position, transform: (x: JumpPosition) => JumpPosition): vscode.Position | undefined {
-        let jmp = this.jumpPositions.find(x => x.range.contains(currentPosition));
+    private _jump(currentPosition: vscode.Position, transform: (x: JumpPosition) => JumpPosition): vscode.Position | undefined {
+        let jmp = this._jumpPositions.find(x => x.range.contains(currentPosition));
         if (jmp) {
             jmp = transform(jmp);
             if (jmp) {
@@ -175,12 +176,13 @@ export class TableNavigator {
         // Maybe we're just outside left part of table? Let's move cursor a bit...
         if (currentPosition.character === 0) {
             return currentPosition.translate(0, 2);
-        } else {
+        }
+        else {
             return undefined;
         }
     }
 
-    private buildJumpPositions(): JumpPosition[] {
+    private _buildJumpPositions(): JumpPosition[] {
         const result: JumpPosition[] = [];
 
         const tableOffset = this.table.prefix.length;

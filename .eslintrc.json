@@ -9,13 +9,42 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "@typescript-eslint/class-name-casing": "warn",
-        "@typescript-eslint/semi": "warn",
-        "brace-style": "error",
+        "brace-style": ["error", "stroustrup"],
         "curly": ["error", "all"],
         "eqeqeq": "warn",
         "no-throw-literal": "warn",
         "quotes": ["error", "single"],
-        "semi": "error"
+        "semi": ["off"],
+        "no-unexpected-multiline": "error",
+        "camelcase": "off",
+        "@typescript-eslint/naming-convention": [
+            "error",
+            {
+            "selector": "default",
+            "format": ["camelCase"]
+            },
+        
+            {
+            "selector": "variable",
+            "format": ["camelCase", "UPPER_CASE"]
+            },
+            {
+            "selector": "parameter",
+            "format": ["camelCase"],
+            "leadingUnderscore": "allow"
+            },
+        
+            {
+            "selector": "memberLike",
+            "modifiers": ["private"],
+            "format": ["camelCase"],
+            "leadingUnderscore": "require"
+            },
+        
+            {
+            "selector": "typeLike",
+            "format": ["PascalCase"]
+            }
+        ]
     }
 }
