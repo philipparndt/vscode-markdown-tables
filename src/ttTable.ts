@@ -140,12 +140,13 @@ export class TableNavigator {
 
     position(row: number, column: number): vscode.Position | undefined {
         const jumPosition = row * this.table.cols.length + column
+        const pos = this._jumpPositions[jumPosition]
 
-        if (jumPosition >= this._jumpPositions.length) {
+        if (!pos) {
             return undefined
         }
         else {
-            return this._jumpPositions[jumPosition].range.start.translate(0, 1)
+            return pos.range.start.translate(0, 1)
         }
     }
 
