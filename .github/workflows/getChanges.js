@@ -9,7 +9,7 @@ try {
     let changes = []
 
     for (line of data.split(/\r\n|\n/)) {
-        if (line.trim().startsWith("#")) {
+        if (line.trim().startsWith("# ")) {
             found = false;
         }
 
