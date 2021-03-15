@@ -104,5 +104,5 @@ If you found a bug or want to propose a new feature for the extension, please cr
 
 [CHANGELOG]: ./CHANGELOG.md
 [LICENSE]: ./LICENSE
-[version-badge]: https://img.shields.io/badge/version-1.1.0-blue.svg
+[version-badge]: https://img.shields.io/badge/release-changelog-blue.svg
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
