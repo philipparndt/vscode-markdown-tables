@@ -5,13 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+# 1.2.1 - 2021-03-14
+
 ### Changed
+
+- Updated description
 
 # 1.2.0 - 2021-03-14
 
-- Removed `Org` mode. The parser lacks some features (e.g. escaping), and I don't plan to test and use this.
+### Changed
+
 - Fixed a rare issue while jumping through the table.
 - Dependency updates
+
+### Removed
+
+- Removed `Org` mode. The parser lacks some features (e.g. escaping), and I don't plan to test and use this.
+
 
 # 1.1.1 - 2021-03-13
 
