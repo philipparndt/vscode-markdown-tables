@@ -4,7 +4,7 @@
 
 ![Text tables](icons/icon.png)
 
-VSCode Marketplace: https://marketplace.visualstudio.com/items?itemName=pharndt.vscode-markdown-table
+[VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=pharndt.vscode-markdown-table)
 
 VSCode extension that helps you formatting markdown tables in GitHub style.
 
