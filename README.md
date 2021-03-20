@@ -38,7 +38,7 @@ You can access all of the above commands from the command palette (<kbd>Ctrl</kb
 
 ## Table mode
 
-Table mode is the mode where some of the default keybindings have another action assigned.
+The `Table mode` is the mode where some of the default keybindings have another action assigned.
 
 To enter table mode you may execute command `Text Tables: Enter table mode` from command palette or press <kbd>Ctrl</kbd>+<kbd>q</kbd> <kbd>Ctrl</kbd>+<kbd>q</kbd> shortcut to toggle mode. To control whether you're in table mode or not, see the icon in the status bar of Visual Studio Code:
 
@@ -61,7 +61,7 @@ When in table mode, <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> keybindin
 
 ### Custom keybindings
 
-The extension introduces additional `tableMode` when-clause that you may use to define your own keybindings when in table mode.
+The extension introduces an additional `tableMode` when-clause that you may use to define your own keybindings when in table mode.
 
 Sample keybinding:
 
@@ -75,7 +75,7 @@ Sample keybinding:
 
 ## Settings
 
-This extension introduces some settings that you may setup in your user settings or workspace settings.
+This extension introduces some settings that you may set up in your user settings or workspace settings.
 
 Available settings:
 
@@ -101,7 +101,7 @@ privately for a long time. When the original project comes back to life, I'm hap
 
 All contributions are welcome.
 
-If you found a bug or want to propose a new feature for the extension, please create an issue.
+If you found a bug or propose a new feature for the extension, please create an issue.
 
 [LICENSE]: ./LICENSE
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
