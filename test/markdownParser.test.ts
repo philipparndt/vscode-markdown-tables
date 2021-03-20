@@ -34,6 +34,15 @@ const cellContentOfttTable = (table: Table | undefined) => {
 
 suite('Markdown parser', () => {
 
+    test('table prefix', () => {
+        const parser = new MarkdownParser()
+        assert.equal(parser.parse('\t| A | B |\n')!.prefix, '\t')
+        assert.equal(parser.parse('\t\t| A | B |\n')!.prefix, '\t\t')
+        assert.equal(parser.parse('   | A | B |\n')!.prefix, '   ')
+        assert.equal(parser.parse('\n   | A | B |\n')!.prefix, '   ')
+        assert.equal(parser.parse('\r\n   | A | B |\n')!.prefix, '   ')
+    })
+
     test('parse table - one line', () => {
         const cleaned = '| A | B |\n'
         const ast = parser.getAST(cleaned)
