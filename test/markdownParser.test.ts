@@ -1,16 +1,16 @@
-import { IToken } from "ebnf"
+import { IToken } from 'ebnf'
 
-import * as assert from 'assert';
-import { relaxedTableParser as parser} from "../src/markdownParser";
-import { MarkdownParser } from "../src/ttMarkdown";
-import { Table } from "../src/ttTable";
+import * as assert from 'assert'
+import { relaxedTableParser as parser} from '../src/markdownParser'
+import { MarkdownParser } from '../src/ttMarkdown'
+import {Alignment, Table} from '../src/ttTable'
 
 const cellContentOfTable = (ast: IToken) => {
     const result = []
     for (const line of ast.children) {
-        const row = line.children.filter(child => child.type === "Row")[0]
+        const row = line.children.filter(child => child.type === 'Row')[0]
         const cells = row.children
-            .filter(child => child.type === "Cell")
+            .filter(child => child.type === 'Cell')
             .map(cell => cell.children[0])
             .map(cellContent => cellContent.text)
 
@@ -23,37 +23,46 @@ const cellContentOfttTable = (table: Table | undefined) => {
     const result: string[][] = []
 
     if (!table) {
-        return result;
+        return result
     }
 
     for (let i = 0; i < table.rows.length; i++) {
-        result.push(table.getRow(i));
+        result.push(table.getRow(i))
     }
     return result
 }
 
 suite('Markdown parser', () => {
 
+    test('table prefix', () => {
+        const parser = new MarkdownParser()
+        assert.equal(parser.parse('\t| A | B |\n')!.prefix, '\t')
+        assert.equal(parser.parse('\t\t| A | B |\n')!.prefix, '\t\t')
+        assert.equal(parser.parse('   | A | B |\n')!.prefix, '   ')
+        assert.equal(parser.parse('\n   | A | B |\n')!.prefix, '   ')
+        assert.equal(parser.parse('\r\n   | A | B |\n')!.prefix, '   ')
+    })
+
     test('parse table - one line', () => {
-        const cleaned = "| A | B |\n"
+        const cleaned = '| A | B |\n'
         const ast = parser.getAST(cleaned)
 
-        assert.deepStrictEqual(cellContentOfTable(ast), [[" A ", " B "]]);
-    });
+        assert.deepStrictEqual(cellContentOfTable(ast), [[' A ', ' B ']])
+    })
 
     test('parse table', () => {
-        const cleaned = "| A | B |\n| C | D |"
+        const cleaned = '| A | B |\n| C | D |'
         const ast = parser.getAST(cleaned)
-
-        assert.deepStrictEqual(cellContentOfTable(ast), [[" A ", " B "], [" C ", " D "]]);
-    });
+        
+        assert.deepStrictEqual(cellContentOfTable(ast), [[' A ', ' B '], [' C ', ' D ']])
+    })
 
     test('parse table - with escaped content', () => {
-        const cleaned = "| A\\|B | C |\n| D | E |"
+        const cleaned = '| A\\|B | C |\n| D | E |'
         const ast = parser.getAST(cleaned)
 
-        assert.deepStrictEqual(cellContentOfTable(ast), [[" A\\|B ", " C "], [" D ", " E "]]);
-    });
+        assert.deepStrictEqual(cellContentOfTable(ast), [[' A\\|B ', ' C '], [' D ', ' E ']])
+    })
 
     test('parse incomplete table', () => {
         const cleaned = `
@@ -62,14 +71,14 @@ suite('Markdown parser', () => {
         | E | F | G |
         `
 
-        const parser = new MarkdownParser();
-        const table = parser.parse(cleaned);
+        const parser = new MarkdownParser()
+        const table = parser.parse(cleaned)
         assert.deepStrictEqual(cellContentOfttTable(table), [
-            ["A\\|B", "C", "D"], 
-            ["", "", ""], 
-            ["E", "F", "G"]
-        ]);
-    });
+            ['A\\|B', 'C', 'D'], 
+            ['', '', ''], 
+            ['E', 'F', 'G']
+        ])
+    })
 
     test('parse incomplete table', () => {
         const cleaned = `
@@ -77,13 +86,13 @@ suite('Markdown parser', () => {
         | 4   | \\|
         `
 
-        const parser = new MarkdownParser();
-        const table = parser.parse(cleaned);
+        const parser = new MarkdownParser()
+        const table = parser.parse(cleaned)
         assert.deepStrictEqual(cellContentOfttTable(table), [
-            ["hi", "there"], 
-            ["4", "\\|"], 
-        ]);
-    });
+            ['hi', 'there'], 
+            ['4', '\\|'], 
+        ])
+    })
 
     test('parse empty cells', () => {
         const cleaned = `
@@ -92,14 +101,14 @@ suite('Markdown parser', () => {
         | c | d |
         `
 
-        const parser = new MarkdownParser();
-        const table = parser.parse(cleaned);
+        const parser = new MarkdownParser()
+        const table = parser.parse(cleaned)
         assert.deepStrictEqual(cellContentOfttTable(table), [
-            ["a", "b"],
-            ["", ""],
-            ["c", "d"], 
-        ]);
-    });
+            ['a', 'b'],
+            ['', ''],
+            ['c', 'd'], 
+        ])
+    })
 
     test('parse additional cell', () => {
         const cleaned = `
@@ -108,12 +117,28 @@ suite('Markdown parser', () => {
         | c | d |
         `
 
-        const parser = new MarkdownParser();
-        const table = parser.parse(cleaned);
+        const parser = new MarkdownParser()
+        const table = parser.parse(cleaned)
         assert.deepStrictEqual(cellContentOfttTable(table), [
-            ["a", "b", ""],
-            ["", "", ""],
-            ["c", "d", ""], 
-        ]);
-    });
-});
+            ['a', 'b', ''],
+            ['', '', ''],
+            ['c', 'd', ''], 
+        ])
+    })
+
+    test('parse alignment', () => {
+        const cleaned = `
+        | default | left | right | center |
+        | ------- |:---- | -----:|:------:|
+        |         |      |       |        |
+        `
+
+        const parser = new MarkdownParser()
+        const table = parser.parse(cleaned)
+
+        assert.equal(table!.cols[0].alignment, Alignment.default)
+        assert.equal(table!.cols[1].alignment, Alignment.left)
+        assert.equal(table!.cols[2].alignment, Alignment.right)
+        assert.equal(table!.cols[3].alignment, Alignment.center)
+    })
+})

@@ -7,6 +7,7 @@ export enum RowType {
 }
 
 export enum Alignment {
+    default,
     left,
     center,
     right
@@ -40,7 +41,7 @@ export class Table {
     addRow(type: RowType, values: string[]) {
         let adjustCount = values.length - this.cols.length
         while (adjustCount-- > 0) {
-            this.cols.push({ alignment: Alignment.left, width: 0 })
+            this.cols.push({ alignment: Alignment.default, width: 0 })
         }
 
         for (const row of this._data) {
@@ -52,7 +53,9 @@ export class Table {
             }
         }
 
-        this.cols.forEach((col, i) => col.width = Math.max(col.width, values[i].length))
+        if (type !== RowType.separator) {
+            this.cols.forEach((col, i) => col.width = Math.max(col.width, values[i].length))
+        }
 
         this.rows.push({ type })
         this._data.push(values)
@@ -68,7 +71,7 @@ export class Table {
 
     addCol(index: number) {
         const newColumn = {
-            alignment: Alignment.left,
+            alignment: Alignment.default,
             width: 0
         }
 
