@@ -1,14 +1,19 @@
 import * as tt from './ttTable'
+import { RowType, Table } from './ttTable'
 import * as vscode from 'vscode'
-import { RowType } from './ttTable'
 import { convertEOL, findTablePrefix } from './utils'
-import { relaxedTableParser as relaxedParser} from '../src/markdownParser'
+import { relaxedTableParser as relaxedParser } from '../src/markdownParser'
 import { IToken, Parser } from 'ebnf'
 
 const verticalSeparator = '|'
 const horizontalSeparator = '-'
 
 type StringReducer = (previous: string, current: string, index: number) => string
+
+const ALIGN_BEGIN_SPACE = ' -'
+const ALIGN_BEGIN_COLON = ':-'
+const ALIGN_END_SPACE = '- ' + verticalSeparator
+const ALIGN_END_COLON = '-:' + verticalSeparator
 
 export class MarkdownParser implements tt.Parser {
     parse(text: string): tt.Table | undefined {
@@ -29,14 +34,30 @@ export class MarkdownParser implements tt.Parser {
             result.cols.forEach(x => x.width = Math.max(x.width, 3))
         }
 
+        this._parseAlignment(result)
+
         return result
+    }
+
+    private _parseAlignment(result: Table) {
+        for (let i = 0; i < result.rows.length; ++i) {
+            if (result.rows[i].type === RowType.separator) {
+                const rowData = result.getRow(i)
+
+                rowData.forEach((column, index) => {
+                    result.cols[index].alignment = this._getAlignment(column)
+                })
+
+                return
+            }
+        }
     }
 
     isSeparatorRow(text: string): boolean {
         return isSeparatorRow(text)
     }
 
-    getAlignment(column: string): tt.Alignment {
+    private _getAlignment(column: string): tt.Alignment {
         const trimmed = column.trim()
 
         const end = trimmed.endsWith(':')
@@ -52,7 +73,7 @@ export class MarkdownParser implements tt.Parser {
             return tt.Alignment.left
         }
         else {
-            return tt.Alignment.left // Should be default
+            return tt.Alignment.default
         }
     }
 }
@@ -89,16 +110,24 @@ export class MarkdownStringifier implements tt.Stringifier {
             return prev + ' ' + cur + pad + verticalSeparator
         }
     }
-
+    
     private _separatorReducer(cols: tt.ColDef[]): StringReducer {
         return (prev, _, idx) => {
-            const begin = cols[idx].alignment === tt.Alignment.center
-                ? ':-'
-                : ' -'
-            const ending = cols[idx].alignment !== tt.Alignment.left
-                ? '-:' + verticalSeparator
-                : '- ' + verticalSeparator
-
+            let begin = ALIGN_BEGIN_SPACE
+            let ending = ALIGN_END_SPACE
+            switch (cols[idx].alignment) {
+                case tt.Alignment.left:
+                    begin = ALIGN_BEGIN_COLON
+                    break
+                case tt.Alignment.right:
+                    ending = ALIGN_END_COLON
+                    break
+                case tt.Alignment.center:
+                    begin = ALIGN_BEGIN_COLON
+                    ending = ALIGN_END_COLON
+                    break
+                default:
+            }
             const middle = horizontalSeparator.repeat(cols[idx].width - 2)
 
             return prev + begin + middle + ending
@@ -143,12 +172,13 @@ function isSeparatorRowForColumns(columns: string[]): boolean {
 }
 
 function isSeparatorColumn(column: string): boolean {
-    return column.trim().match(/^[:]{0,1}-+[:]{0,1}$/) ? true : false
+    return !!column.trim().match(/^[:]?-+[:]?$/)
 }
 
 function isSeparatorRow(text: string): boolean {
     const cleaned = text.replace(/\s+/g, '')
-    return (cleaned.startsWith('|-') || cleaned.startsWith('|:-')) && cleaned.match(/^[:|-\s]+$/) ? true : false
+    return (cleaned.startsWith('|-') || cleaned.startsWith('|:-'))
+        && !!cleaned.match(/^[:|\-\s]+$/)
 }
 
 function parseRelaxed(text: string, table: tt.Table): boolean {

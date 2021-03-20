@@ -117,3 +117,20 @@ suite('Markdown parser', () => {
         ]);
     });
 });
+
+    test('parse alignment', () => {
+        const cleaned = `
+        | default | left | right | center |
+        | ------- |:---- | -----:|:------:|
+        |         |      |       |        |
+        `
+
+        const parser = new MarkdownParser()
+        const table = parser.parse(cleaned)
+
+        assert.equal(table!.cols[0].alignment, Alignment.default)
+        assert.equal(table!.cols[1].alignment, Alignment.left)
+        assert.equal(table!.cols[2].alignment, Alignment.right)
+        assert.equal(table!.cols[3].alignment, Alignment.center)
+    })
+})
