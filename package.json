@@ -203,6 +203,8 @@
         "vscode-test": "1.5.1"
     },
     "dependencies": {
-        "ebnf": "^1.9.0"
+        "@types/voca": "^1.4.0",
+        "ebnf": "^1.9.0",
+        "voca": "^1.4.0"
     }
 }

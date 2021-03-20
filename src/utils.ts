@@ -1,4 +1,5 @@
 import * as vscode from 'vscode'
+import * as voca from 'voca'
 
 export const tableSizeRe = /^(\d+)x(\d+)$/u
 
@@ -15,7 +16,7 @@ export function findTablePrefix(text: string, tableStart: string): string {
     const startIndex = text.indexOf(tableStart)
 
     if (startIndex > 0) {
-        return text.substr(0, startIndex)
+        return voca.trim(text.substr(0, startIndex), '\r\n')
     }
     else {
         return ''
