@@ -14,6 +14,9 @@ VSCode extension that helps you formatting markdown tables in GitHub style.
 
 - Tables reformat
 - Easy table cells navigation
+- Alignments
+  ![Alignments](doc/alignment.gif)
+
 
 ## Activation
 

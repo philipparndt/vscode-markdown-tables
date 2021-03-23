@@ -106,8 +106,19 @@ export class MarkdownStringifier implements tt.Stringifier {
 
     private _dataRowReducer(cols: tt.ColDef[]): StringReducer {
         return (prev, cur, idx) => {
-            const pad = ' '.repeat(cols[idx].width - cur.length + 1)
-            return prev + ' ' + cur + pad + verticalSeparator
+            const amount = cols[idx].width - cur.length
+
+            const padl = ' '.repeat(Math.ceil(amount / 2))
+            const padr = ' '.repeat(Math.floor(amount / 2))
+
+            switch (cols[idx].alignment) {
+                case tt.Alignment.right:
+                    return prev + ' ' + padl + padr + cur + ' ' + verticalSeparator
+                case tt.Alignment.center:
+                    return prev + ' ' + padl + cur + padr + ' ' + verticalSeparator
+                default:
+                    return prev + ' ' + cur + padl + padr + ' ' + verticalSeparator
+            }
         }
     }
     
