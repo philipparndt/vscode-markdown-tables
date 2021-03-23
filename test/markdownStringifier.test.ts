@@ -43,4 +43,19 @@ suite('Markdown stringifier', () => {
         |         |      |       |        |
         `)
     })
+
+    test('stringify text alignment', () => {
+
+        assertParseStringify(`
+        | default | left | right | center |
+        | ------- |:---- | -----:|:------:|
+        | 1       | 1    | 1     | 1      |
+        | 2       | 2    | 2     | 2      |
+        `, `
+        | default | left | right | center |
+        | ------- |:---- | -----:|:------:|
+        | 1       | 1    |     1 |    1   |
+        | 2       | 2    |     2 |    2   |
+        `)
+    })
 })
