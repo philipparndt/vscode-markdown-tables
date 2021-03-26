@@ -200,7 +200,7 @@
         "mocha": "8.3.2",
         "typescript": "4.2.3",
         "vsce": "1.87.0",
-        "vscode-test": "1.5.1"
+        "vscode-test": "1.5.2"
     },
     "dependencies": {
         "@types/voca": "^1.4.0",
