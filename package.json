@@ -195,7 +195,7 @@
         "@typescript-eslint/eslint-plugin": "4.22.1",
         "@typescript-eslint/parser": "4.22.1",
         "decache": "4.6.0",
-        "eslint": "7.25.0",
+        "eslint": "7.26.0",
         "glob": "7.1.6",
         "mocha": "8.3.2",
         "typescript": "4.2.4",
