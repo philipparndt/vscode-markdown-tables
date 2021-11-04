@@ -70,7 +70,7 @@ jobs:
           asset_name: vscode-markdown-table-${{steps.project-version.outputs.version}}.vsix
           asset_content_type: application/vsix
 
-      - uses: lannonbr/vsce-action@2.0.0
+      - uses: lannonbr/vsce-action@3.0.0
         with:
           args: "publish -p $VSCE_TOKEN"
         env:
