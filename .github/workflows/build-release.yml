@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,8 +14,8 @@ jobs:
       - name: Node Setup
         uses: actions/setup-node@v2-beta
         with:
-          node-version: '12'
-      
+          node-version: '14'
+
       - id: changelog
         name: Check changelog
         run: |
@@ -38,7 +38,7 @@ jobs:
           rm package-lock.json
           npm install
           npm run package
-    
+
       - name: Test
         run: |
           sudo apt-get install xvfb
