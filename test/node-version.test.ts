@@ -34,4 +34,10 @@ suite('Same version for build and vscode', () => {
         assert.equal(process.version.split('.')[0].substring(1), findNodeVersion('check.yml'))
     })
 
+    test('package.json', () => {
+        const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json')).toString('utf8'))
+        const nodeTypes = packageJson.devDependencies['@types/node'].split('.')[0]
+        assert.equal(process.version.split('.')[0].substring(1), nodeTypes)
+    })
+
 })
