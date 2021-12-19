@@ -16,7 +16,7 @@ export function findTablePrefix(text: string, tableStart: string): string {
     const startIndex = text.indexOf(tableStart)
 
     if (startIndex > 0) {
-        return voca.trim(text.substr(0, startIndex), '\r\n')
+        return voca.trim(text.substring(0, startIndex), '\r\n')
     }
     else {
         return ''
