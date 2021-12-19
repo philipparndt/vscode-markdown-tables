@@ -31,10 +31,26 @@
     ],
     "main": "./out/src/extension",
     "contributes": {
+        "menus": {
+            "commandPalette": [
+                {
+                    "command": "text-tables.enable",
+                    "when": "!markdownTables"
+                },
+                {
+                    "command": "text-tables.disable",
+                    "when": "markdownTables"
+                }
+            ]
+        },
         "commands": [
             {
                 "command": "text-tables.enable",
                 "title": "Markdown Tables: Enable"
+            },
+            {
+                "command": "text-tables.disable",
+                "title": "Markdown Tables: Disable"
             },
             {
                 "command": "text-tables.formatUnderCursor",

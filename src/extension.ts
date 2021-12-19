@@ -7,6 +7,7 @@ import { Locator, Parser, Stringifier, Table } from './ttTable'
 import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdown'
 import { registerContext, ContextType, enterContext, exitContext, restoreContext, toggleContext, updateSelectionContext } from './context'
 import * as cfg from './configuration'
+import { enterMarkdownTables, exitMarkdownTables } from './context/markdownTables'
 
 let locator: Locator
 let parser: Parser
@@ -25,11 +26,14 @@ export function activate(ctx: vscode.ExtensionContext) {
     loadConfiguration()
     registerContext(ContextType.inTable, 'Cursor in table')
     registerContext(ContextType.potentiallyInTable, 'Cursor potentially in table')
+    registerContext(ContextType.markdownTables, 'Markdown tables')
 
     const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left)
 
     registerContext(ContextType.tableMode, 'Table', statusItem)
     statusItem.command = 'text-tables.tableModeToggle'
+
+    enterMarkdownTables()
 
     if (configuration.showStatus) {
         statusItem.show()
@@ -53,7 +57,24 @@ export function activate(ctx: vscode.ExtensionContext) {
     })
 
     ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.enable', () => {
-        vscode.window.showInformationMessage('Text tables enabled!')
+        if (configuration.showStatus) {
+            statusItem.show()
+        }
+        enterMarkdownTables()
+
+        vscode.window.showInformationMessage('Markdown tables enabled!')
+    }))
+
+    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.disable', () => {
+        statusItem.hide()
+
+        const editor: vscode.TextEditor | undefined = vscode.window.activeTextEditor
+        if (editor) {
+            exitContext(editor, ContextType.tableMode)
+        }
+        exitMarkdownTables()
+
+        vscode.window.showInformationMessage('Markdown tables disabled!')
     }))
 
     ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.tableModeOn',
@@ -62,7 +83,7 @@ export function activate(ctx: vscode.ExtensionContext) {
         (e) => exitContext(e, ContextType.tableMode)))
     ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.tableModeToggle',
         (e) => toggleContext(e, ContextType.tableMode)))
-
+    
     ctx.subscriptions.push(registerTableCommand('text-tables.moveRowDown', cmd.moveRowDown, {format: true}))
     ctx.subscriptions.push(registerTableCommand('text-tables.moveRowUp', cmd.moveRowUp, {format: true}))
     ctx.subscriptions.push(registerTableCommand('text-tables.moveColRight', async (editor, range, table) => {
@@ -124,6 +145,7 @@ export function activate(ctx: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
+    console.log('deactivate')
 }
 
 type TableCommandCallback = (editor: vscode.TextEditor, tableLocation: vscode.Range, table: Table) => Thenable<void>
