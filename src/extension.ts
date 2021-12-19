@@ -145,7 +145,6 @@ export function activate(ctx: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-    console.log('deactivate')
 }
 
 type TableCommandCallback = (editor: vscode.TextEditor, tableLocation: vscode.Range, table: Table) => Thenable<void>
