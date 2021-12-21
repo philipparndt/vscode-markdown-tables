@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { ContextType, enterContext, exitContext } from '../context'
+import { ContextType, enterContext, exitContext } from './context'
 
 export const enterMarkdownTables = () => {
     const editor: vscode.TextEditor | undefined = vscode.window.activeTextEditor

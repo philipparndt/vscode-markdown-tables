@@ -5,7 +5,7 @@ import * as utils from './utils'
 import * as cmd from './commands'
 import { Locator, Parser, Stringifier, Table } from './ttTable'
 import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdown'
-import { registerContext, ContextType, enterContext, exitContext, restoreContext, toggleContext, updateSelectionContext } from './context'
+import { registerContext, ContextType, enterContext, exitContext, restoreContext, toggleContext, updateSelectionContext } from './context/context'
 import * as cfg from './configuration'
 import { enterMarkdownTables, exitMarkdownTables } from './context/markdownTables'
 
