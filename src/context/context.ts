@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 
 export enum ContextType {
+    markdownTables = 'markdownTables',
     tableMode = 'tableMode',
     potentiallyInTable = 'potentiallyInTable',
     inTable = 'inTable'
