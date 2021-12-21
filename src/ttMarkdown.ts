@@ -24,7 +24,10 @@ export class MarkdownParser implements tt.Parser {
         const result = new tt.Table()
         result.prefix = findTablePrefix(text, verticalSeparator)
 
-        const lines = text.split('\n').map(x => x.trim()).filter(x => x.startsWith(verticalSeparator))
+        const lines = text.split('\n').map(x => x.trim()) // .filter(x => x.startsWith(verticalSeparator))
+        if (lines.length === 0) {
+            return undefined
+        }
 
         for (const line of lines) {
             parseRelaxed(line, result)
@@ -152,9 +155,9 @@ export class MarkdownLocator implements tt.Locator {
             if (ln < 0 || ln >= reader.lineCount) {
                 return false
             }
-            const firstCharIdx = reader.lineAt(ln).firstNonWhitespaceCharacterIndex
-            const firstChar = reader.lineAt(ln).text[firstCharIdx]
-            return firstChar === '|'
+
+            const token = relaxedParser.getAST(reader.lineAt(ln).text)
+            return token !== null && token.errors.length === 0
         }
 
         let start = lineNr

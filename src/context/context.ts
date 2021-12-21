@@ -18,6 +18,17 @@ export function registerContext(type: ContextType, title: string, statusItem?: v
     ctx.setState(false)
 }
 
+export function contextState(editor: vscode.TextEditor, type: ContextType) {
+    const ctx = contexts.get(type)
+    if (ctx) {
+        ctx.setState(false)
+
+
+        const editorState = state.get(editor.document.fileName) || []
+        state.set(editor.document.fileName, editorState.filter(x => x !== type))
+    }
+}
+
 export function enterContext(editor: vscode.TextEditor, type: ContextType) {
     const ctx = contexts.get(type)
     if (ctx) {
@@ -39,13 +50,17 @@ export function exitContext(editor: vscode.TextEditor, type: ContextType) {
 }
 
 export function toggleContext(editor: vscode.TextEditor, type: ContextType) {
-    const editorState = state.get(editor.document.fileName) || []
-    if (editorState.indexOf(ContextType.tableMode) >= 0) {
+    if (isTableMode(editor)) {
         exitContext(editor, type)
     }
     else {
         enterContext(editor, type)
     }
+}
+
+export function isTableMode(editor: vscode.TextEditor) {
+    const editorState = state.get(editor.document.fileName) || []
+    return editorState.indexOf(ContextType.tableMode) >= 0
 }
 
 export function restoreContext(editor: vscode.TextEditor) {

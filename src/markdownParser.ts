@@ -17,9 +17,12 @@ const relaxedRowGrammar = `
     `
 
 const relaxedTableGrammar = `
-    Table         ::= Line+
-    Line          ::= WS* Row WS*
-    WS            ::= [#x20#x09#x0A#x0D]+   /* Space | Tab | \\n | \\r */
+    Table              ::= Line+
+    Line               ::= WS* (LineComment|BlockComment|HashComment)? WS* Row WS*
+    WS                 ::= [#x20#x09#x0A#x0D]+   /* Space | Tab | \\n | \\r */
+    LineComment        ::= #x2F #x2F             /* // */
+    BlockComment       ::= #x2A
+    HashComment        ::= #x23
     ${relaxedRowGrammar}
     `
 
