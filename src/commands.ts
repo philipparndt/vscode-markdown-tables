@@ -1,5 +1,4 @@
 import * as vscode from 'vscode'
-import { isTableMode } from './context/context'
 import { Table, RowType, Stringifier, TableNavigator, Parser } from './ttTable'
 
 /**
