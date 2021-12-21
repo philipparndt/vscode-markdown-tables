@@ -3,7 +3,7 @@ import { IToken } from 'ebnf'
 import * as assert from 'assert'
 import { relaxedTableParser as parser} from '../src/markdownParser'
 import { MarkdownParser } from '../src/ttMarkdown'
-import {Alignment, Table} from '../src/ttTable'
+import { Alignment, Table } from '../src/ttTable'
 
 const cellContentOfTable = (ast: IToken) => {
     const result = []
@@ -74,8 +74,8 @@ suite('Markdown parser', () => {
         const parser = new MarkdownParser()
         const table = parser.parse(cleaned)
         assert.deepStrictEqual(cellContentOfttTable(table), [
-            ['A\\|B', 'C', 'D'], 
-            ['', '', ''], 
+            ['A\\|B', 'C', 'D'],
+            ['', '', ''],
             ['E', 'F', 'G']
         ])
     })
@@ -89,8 +89,8 @@ suite('Markdown parser', () => {
         const parser = new MarkdownParser()
         const table = parser.parse(cleaned)
         assert.deepStrictEqual(cellContentOfttTable(table), [
-            ['hi', 'there'], 
-            ['4', '\\|'], 
+            ['hi', 'there'],
+            ['4', '\\|'],
         ])
     })
 
@@ -106,7 +106,7 @@ suite('Markdown parser', () => {
         assert.deepStrictEqual(cellContentOfttTable(table), [
             ['a', 'b'],
             ['', ''],
-            ['c', 'd'], 
+            ['c', 'd'],
         ])
     })
 
@@ -122,7 +122,7 @@ suite('Markdown parser', () => {
         assert.deepStrictEqual(cellContentOfttTable(table), [
             ['a', 'b', ''],
             ['', '', ''],
-            ['c', 'd', ''], 
+            ['c', 'd', ''],
         ])
     })
 
@@ -140,5 +140,30 @@ suite('Markdown parser', () => {
         assert.equal(table!.cols[1].alignment, Alignment.left)
         assert.equal(table!.cols[2].alignment, Alignment.right)
         assert.equal(table!.cols[3].alignment, Alignment.center)
+    })
+
+    const assertParsed = (table: string, expected: any) => {
+        assert.deepStrictEqual(cellContentOfTable(parser.getAST(table)), expected)
+    }
+
+    test('parse table in line comment', () => {
+        assertParsed('//| A | B |\n', [[' A ', ' B ']])
+        assertParsed('// | A | B |\n', [[' A ', ' B ']])
+        assertParsed(' //| A | B |\n', [[' A ', ' B ']])
+        assertParsed(' // | A | B |\n', [[' A ', ' B ']])
+    })
+
+    test('parse table in block comment', () => {
+        assertParsed('*| A | B |\n', [[' A ', ' B ']])
+        assertParsed('* | A | B |\n', [[' A ', ' B ']])
+        assertParsed(' *| A | B |\n', [[' A ', ' B ']])
+        assertParsed(' * | A | B |\n', [[' A ', ' B ']])
+    })
+    
+    test('parse table in hash comment start', () => {
+        assertParsed('#| A | B |\n', [[' A ', ' B ']])
+        assertParsed('# | A | B |\n', [[' A ', ' B ']])
+        assertParsed(' #| A | B |\n', [[' A ', ' B ']])
+        assertParsed(' # | A | B |\n', [[' A ', ' B ']])
     })
 })

@@ -37,14 +37,71 @@ suite('Commands', () => {
 
     test('Keep indent', async () => {
         const testCase =
-        `        | first | second |
-        |  blah blah | this is some text |`
+`        | first | second |
+        |  blah blah | this is some text |
+`
         const expected =
-        `        | first     | second            |
-        | blah blah | this is some text |`
-        
+`
+        | first     | second            |
+        | blah blah | this is some text |
+`
+
         await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
             move(editor, 0, 10)
+            await vscode.commands.executeCommand('text-tables.gotoNextCell')
+
+            assertDocumentText(document, expected)
+        })
+    })
+
+    test('Keep comment indent', async () => {
+        const testCase =
+` //       | first | second |
+ //       |  blah blah | this is some text |
+`
+        const expected =
+` //       | first     | second            |
+ //       | blah blah | this is some text |
+`
+
+        await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
+            move(editor, 0, 12)
+            await vscode.commands.executeCommand('text-tables.gotoNextCell')
+
+            assertDocumentText(document, expected)
+        })
+    })
+
+    test('Keep hash comment indent', async () => {
+        const testCase =
+` #       | first | second |
+ #       |  blah blah | this is some text |
+`
+        const expected =
+` #       | first     | second            |
+ #       | blah blah | this is some text |
+`
+
+        await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
+            move(editor, 0, 12)
+            await vscode.commands.executeCommand('text-tables.gotoNextCell')
+
+            assertDocumentText(document, expected)
+        })
+    })
+
+    test('Keep block comment indent', async () => {
+        const testCase =
+` *       | first | second |
+ *       |  blah blah | this is some text |
+`
+        const expected =
+` *       | first     | second            |
+ *       | blah blah | this is some text |
+`
+
+        await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
+            move(editor, 0, 12)
             await vscode.commands.executeCommand('text-tables.gotoNextCell')
 
             assertDocumentText(document, expected)
@@ -58,7 +115,7 @@ suite('Commands', () => {
         const expected =
         `| A  | B  |
 | -1 | -1 |`
-        
+
         await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
             move(editor, 0, 1)
             await vscode.commands.executeCommand('text-tables.gotoNextCell')
@@ -87,7 +144,7 @@ suite('Commands', () => {
 '| ----- | ----- |'
 
         await inTextEditor({language: 'markdown', content: testCase}, async (editor, document) => {
-            
+
             await vscode.commands.executeCommand('text-tables.clearCell')
             move(editor, 0, 2)
             await vscode.commands.executeCommand('text-tables.clearCell')
@@ -121,7 +178,7 @@ suite('Commands', () => {
         ]
 
         await inTextEditor({language: 'markdown', content: input}, async (editor, document) => {
-            
+
             for (const t of testCases) {
                 await vscode.commands.executeCommand('text-tables.gotoNextCell')
                 assert.deepEqual(editor.selection.start, t)
@@ -236,7 +293,7 @@ suite('Commands', () => {
         ]
 
         await inTextEditor({language: 'markdown', content: input}, async (editor, document) => {
-            
+
             move(editor, 0, 2)
             for (const expected of steps) {
                 await vscode.commands.executeCommand('text-tables.moveColRight')
@@ -262,7 +319,7 @@ suite('Commands', () => {
         ]
 
         await inTextEditor({language: 'markdown', content: input}, async (editor, document) => {
-            
+
             move(editor, 0, 10)
             for (const expected of steps) {
                 await vscode.commands.executeCommand('text-tables.moveColLeft')
@@ -281,7 +338,7 @@ suite('Commands', () => {
 | 4 | 5 | 6 |`
 
         await inTextEditor({language: 'markdown', content: input}, async (_, document) => {
-            
+
 
             await vscode.commands.executeCommand('text-tables.formatUnderCursor')
             assertDocumentText(document, expected)
@@ -300,7 +357,7 @@ suite('Commands', () => {
 | 4   | 5   | 6   |`
 
         await inTextEditor({language: 'markdown', content: input}, async (_, document) => {
-            
+
 
             await vscode.commands.executeCommand('text-tables.formatUnderCursor')
             assertDocumentText(document, expected)
@@ -327,7 +384,7 @@ suite('Commands', () => {
         ]
 
         await inTextEditor({language: 'markdown', content: input}, async (editor, document) => {
-            
+
             move(editor, 0, 2)
             for (const expected of steps) {
                 await vscode.commands.executeCommand('text-tables.nextRow')
