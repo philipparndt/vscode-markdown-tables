@@ -7,8 +7,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 # 1.5.0
 ### Added
-
+#### Disable command
 Disable extension command. This will let you disable the table mode and hides the status item.
+
+#### Tables in comment blocks
+Added support for tables in comment blocks.
+
+Currently, there is support for three types of comments:
+
+```
+#  | first | second |
+#  | a     | b      |
+
+//  | first | second |
+//  | a     | b      |
+
+/*
+ *  | first | second |
+ *  | a     | b      |
+ */
+```
+
+Tables at the block comment start are not supported at the moment.
 
 # 1.4.2 - 2021-10-22
 
