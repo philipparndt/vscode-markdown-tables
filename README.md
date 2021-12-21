@@ -27,7 +27,8 @@ VSCode extension that helps you formatting markdown tables in GitHub style.
 
 The extension provides several commands that are available in the Command Palette:
 
-- `Markdown Tables: Enable` - enable extension.
+- `Markdown Tables: Enable` - enable extension (available when disabled).
+- `Markdown Tables: Disable` - exit table mode and hide status item (available when enabled).
 - `Markdown Tables: Create table` - create a new table at the cursor position.
 - `Markdown Tables: Format under cursor` - reformat the table under the cursor.
 - `Markdown Tables: Enter table mode` - enter [table mode](#table-mode).
