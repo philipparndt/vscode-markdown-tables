@@ -79,7 +79,7 @@ export function restoreContext(editor: vscode.TextEditor) {
 
 export function updateSelectionContext(): void {
     const editor = vscode.window.activeTextEditor
-    if (editor) {
+    if (editor && isTableMode(editor)) {
         const inTable = selectionInTable(editor)
 
         if (selectionInTable(editor)) {
