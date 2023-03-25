@@ -11,10 +11,13 @@ const findNodeVersion = (file: string) => {
     const wf = loadWorkflow(file)
     for (const [, value] of Object.entries(wf.jobs)) {
         const steps = (value as any).steps
-
-        const setupNode = steps.filter((e: any) => e.uses != null && e.uses.startsWith('actions/setup-node'))
+        const setupNode = steps.filter((e: ({ uses: string | undefined })) => e.uses != null && e.uses.startsWith('actions/setup-node'))
         if (setupNode.length === 1) {
-            return setupNode[0].with['node-version'].split('.')[0]
+            let version = setupNode[0].with['node-version']
+            if (`${version}`.includes('.')) {
+                version = version.split('.')[0]
+            }
+            return version
         }
     }
 

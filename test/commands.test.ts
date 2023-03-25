@@ -28,7 +28,6 @@ function assertDocumentText(document: vscode.TextDocument, expected: string) {
 }
 
 suite('Commands', () => {
-
     test('Enable', async () => {
         await inTextEditor({language: 'markdown'}, async () => {
             await cfg.override({showStatus: true})
