@@ -206,8 +206,8 @@
     "devDependencies": {
         "@types/glob": "7.2.0",
         "@types/js-yaml": "4.0.5",
-        "@types/mocha": "9.1.0",
-        "@types/node": "14.18.12",
+        "@types/mocha": "9.0.0",
+        "@types/node": "16.18.20",
         "@types/voca": "1.4.2",
         "@types/vscode": "1.63.1",
         "@typescript-eslint/eslint-plugin": "5.14.0",
