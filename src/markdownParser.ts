@@ -1,4 +1,4 @@
-import { Grammars, Parser } from 'ebnf'
+import { Grammars, Parser } from "ebnf"
 
 const cellContentGrammar = `
     CellContent  ::= CHAR*

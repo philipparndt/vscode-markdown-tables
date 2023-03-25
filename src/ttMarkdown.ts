@@ -1,19 +1,19 @@
-import * as tt from './ttTable'
-import { RowType, Table } from './ttTable'
-import * as vscode from 'vscode'
-import { convertEOL, findTablePrefix } from './utils'
-import { relaxedTableParser as relaxedParser } from '../src/markdownParser'
-import { IToken, Parser } from 'ebnf'
+import * as tt from "./ttTable"
+import { RowType, Table } from "./ttTable"
+import * as vscode from "vscode"
+import { convertEOL, findTablePrefix } from "./utils"
+import { relaxedTableParser as relaxedParser } from "../src/markdownParser"
+import { IToken, Parser } from "ebnf"
 
-const verticalSeparator = '|'
-const horizontalSeparator = '-'
+const verticalSeparator = "|"
+const horizontalSeparator = "-"
 
 type StringReducer = (previous: string, current: string, index: number) => string
 
-const ALIGN_BEGIN_SPACE = ' -'
-const ALIGN_BEGIN_COLON = ':-'
-const ALIGN_END_SPACE = '- ' + verticalSeparator
-const ALIGN_END_COLON = '-:' + verticalSeparator
+const ALIGN_BEGIN_SPACE = " -"
+const ALIGN_BEGIN_COLON = ":-"
+const ALIGN_END_SPACE = "- " + verticalSeparator
+const ALIGN_END_COLON = "-:" + verticalSeparator
 
 export class MarkdownParser implements tt.Parser {
     parse(text: string): tt.Table | undefined {
@@ -24,7 +24,7 @@ export class MarkdownParser implements tt.Parser {
         const result = new tt.Table()
         result.prefix = findTablePrefix(text, verticalSeparator)
 
-        const lines = text.split('\n').map(x => x.trim()) // .filter(x => x.startsWith(verticalSeparator))
+        const lines = text.split("\n").map(x => x.trim()) // .filter(x => x.startsWith(verticalSeparator))
         if (lines.length === 0) {
             return undefined
         }
@@ -63,8 +63,8 @@ export class MarkdownParser implements tt.Parser {
     private _getAlignment(column: string): tt.Alignment {
         const trimmed = column.trim()
 
-        const end = trimmed.endsWith(':')
-        const start = trimmed.startsWith(':')
+        const end = trimmed.endsWith(":")
+        const start = trimmed.startsWith(":")
 
         if (end && start) {
             return tt.Alignment.center
@@ -111,16 +111,16 @@ export class MarkdownStringifier implements tt.Stringifier {
         return (prev, cur, idx) => {
             const amount = cols[idx].width - cur.length
 
-            const padl = ' '.repeat(Math.ceil(amount / 2))
-            const padr = ' '.repeat(Math.floor(amount / 2))
+            const padl = " ".repeat(Math.ceil(amount / 2))
+            const padr = " ".repeat(Math.floor(amount / 2))
 
             switch (cols[idx].alignment) {
                 case tt.Alignment.right:
-                    return prev + ' ' + padl + padr + cur + ' ' + verticalSeparator
+                    return prev + " " + padl + padr + cur + " " + verticalSeparator
                 case tt.Alignment.center:
-                    return prev + ' ' + padl + cur + padr + ' ' + verticalSeparator
+                    return prev + " " + padl + cur + padr + " " + verticalSeparator
                 default:
-                    return prev + ' ' + cur + padl + padr + ' ' + verticalSeparator
+                    return prev + " " + cur + padl + padr + " " + verticalSeparator
             }
         }
     }
@@ -190,8 +190,8 @@ function isSeparatorColumn(column: string): boolean {
 }
 
 function isSeparatorRow(text: string): boolean {
-    const cleaned = text.replace(/\s+/g, '')
-    return (cleaned.startsWith('|-') || cleaned.startsWith('|:-'))
+    const cleaned = text.replace(/\s+/g, "")
+    return (cleaned.startsWith("|-") || cleaned.startsWith("|:-"))
         && !!cleaned.match(/^[:|\-\s]+$/)
 }
 
@@ -206,7 +206,7 @@ function parse(parser: Parser, textLine: string, table: tt.Table): boolean {
     }
 
     for (const line of ast.children) {
-        const row = line.children.filter(child => child.type === 'Row')[0]
+        const row = line.children.filter(child => child.type === "Row")[0]
 
         const cells = getCellContent(row)
 
@@ -224,20 +224,20 @@ function parse(parser: Parser, textLine: string, table: tt.Table): boolean {
 function getCellContent(row: IToken) {
     const cells: string[] = []
     for (const cell of row.children) {
-        if (cell.type === 'EmptyCell') {
-            cells.push('')
+        if (cell.type === "EmptyCell") {
+            cells.push("")
         }
-        else if (cell.type === 'Cell') {
+        else if (cell.type === "Cell") {
             cells.push(cell.children[0].text.trim())
         }
     }
 
     const borders = row.children
-        .filter(child => child.type === 'CellBorder')
+        .filter(child => child.type === "CellBorder")
         .length
 
     for (let i = cells.length; i < borders; i++) {
-        cells.push('')
+        cells.push("")
     }
 
     return cells

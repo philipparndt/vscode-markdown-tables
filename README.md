@@ -6,7 +6,7 @@
 
 [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=pharndt.vscode-markdown-table)
 
-VSCode extension that helps you formatting markdown tables in GitHub style.
+VSCode extension that helps you format Markdown tables in GitHub style.
 
 ![Sample](doc/sample.gif)
 
@@ -15,7 +15,7 @@ VSCode extension that helps you formatting markdown tables in GitHub style.
 - Tables reformat
 - Easy table cells navigation
 - Alignments
-  ![Alignments](doc/alignment.gif)
+ ![Alignments](doc/alignment.gif)
 
 
 ## Activation
@@ -27,7 +27,7 @@ VSCode extension that helps you formatting markdown tables in GitHub style.
 
 The extension provides several commands that are available in the Command Palette:
 
-- `Markdown Tables: Enable` - enable extension (available when disabled).
+- `Markdown Tables: Enable` - enable the extension (available when disabled).
 - `Markdown Tables: Disable` - exit table mode and hide status item (available when enabled).
 - `Markdown Tables: Create table` - create a new table at the cursor position.
 - `Markdown Tables: Format under cursor` - reformat the table under the cursor.
@@ -44,7 +44,7 @@ You can access all of the above commands from the command palette (<kbd>Ctrl</kb
 
 The `Table mode` is the mode where some of the default keybindings have another action assigned.
 
-To enter table mode you may execute command `Text Tables: Enter table mode` from command palette or press <kbd>Ctrl</kbd>+<kbd>q</kbd> <kbd>Ctrl</kbd>+<kbd>q</kbd> shortcut to toggle mode. To control whether you're in table mode or not, see the icon in the status bar of Visual Studio Code:
+To enter table mode, you may execute the command `Text Tables: Enter table mode` from the command palette or press <kbd>Ctrl</kbd>+<kbd>q</kbd> <kbd>Ctrl</kbd>+<kbd>q</kbd> shortcut to toggle mode. To control whether you're in table mode or not, see the icon in the status bar of Visual Studio Code:
 
 ![Table mode status](doc/table-mode-status.png)
 
@@ -93,8 +93,8 @@ privately for a long time. When the original project comes back to life, I'm hap
 ### New features/fixes compared to the original version
 
 - Use EOL character form vscode.TextEditor
-- Keep current indentation of the table when formatting
-- Avoid flicker during navigation without change
+- Keep the current indentation of the table when formatting
+- Avoid flickering during navigation without change
 - Support insert a column left to the current position
 - Toggle the table mode using the status item
 - Gherkin feature file support
@@ -105,7 +105,7 @@ privately for a long time. When the original project comes back to life, I'm hap
 
 All contributions are welcome.
 
-If you found a bug or propose a new feature for the extension, please create an issue.
+If you find a bug or propose a new feature for the extension, please create an issue.
 
 [LICENSE]: ./LICENSE
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg

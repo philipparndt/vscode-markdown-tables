@@ -13,7 +13,7 @@
         "curly": ["error", "all"],
         "eqeqeq": "warn",
         "no-throw-literal": "warn",
-        "quotes": ["error", "single"],
+        "quotes": ["error", "double"],
         "semi": ["error", "never"],
         "no-unexpected-multiline": "error",
         "camelcase": "off",

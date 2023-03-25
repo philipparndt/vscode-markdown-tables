@@ -1,14 +1,14 @@
-import * as assert from 'assert'
-import { MarkdownParser, MarkdownStringifier } from '../src/ttMarkdown'
-import * as vscode from 'vscode'
-import * as voca from 'voca'
+import * as assert from "assert"
+import { MarkdownParser, MarkdownStringifier } from "../src/ttMarkdown"
+import * as vscode from "vscode"
+import * as voca from "voca"
 
 function assertCleaned(actual: string, expected: string) {
     assert.equal(clean(actual), clean(expected))
 }
 
 function clean(string: string) {
-    return voca.trimLeft(voca.trimRight(string), '\r\n')
+    return voca.trimLeft(voca.trimRight(string), "\r\n")
 }
 
 function assertParseStringify(original: string, expected: string) {
@@ -20,9 +20,9 @@ function assertParseStringify(original: string, expected: string) {
     assertCleaned(result, expected)
 }
 
-suite('Markdown stringifier', () => {
+suite("Markdown stringifier", () => {
 
-    test('stringify alignment', () => {
+    test("stringify alignment", () => {
         const cleaned = `
         | default | left | right | center |
         | ------- |:---- | -----:|:------:|
@@ -32,7 +32,7 @@ suite('Markdown stringifier', () => {
         assertParseStringify(cleaned, cleaned)
     })
 
-    test('stringify alignment - remove whitespaces', () => {
+    test("stringify alignment - remove whitespaces", () => {
         assertParseStringify(`
         | default |  left | right  | center   |
         | ------- | :---- | -----: | :------: |
@@ -44,7 +44,7 @@ suite('Markdown stringifier', () => {
         `)
     })
 
-    test('stringify text alignment', () => {
+    test("stringify text alignment", () => {
 
         assertParseStringify(`
         | default | left | right | center |

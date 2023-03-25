@@ -200,7 +200,8 @@
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile && npm run lint",
         "test": "node ./out/test/runTest.js",
-        "lint": "eslint src --ext ts",
+        "lint": "eslint . --ext ts",
+        "lint:fix": "eslint . --ext ts --fix",
         "package": "vsce package"
     },
     "devDependencies": {
