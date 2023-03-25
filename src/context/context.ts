@@ -1,10 +1,10 @@
-import * as vscode from 'vscode'
+import * as vscode from "vscode"
 
 export enum ContextType {
-    markdownTables = 'markdownTables',
-    tableMode = 'tableMode',
-    potentiallyInTable = 'potentiallyInTable',
-    inTable = 'inTable'
+    markdownTables = "markdownTables",
+    tableMode = "tableMode",
+    potentiallyInTable = "potentiallyInTable",
+    inTable = "inTable"
 }
 
 const contexts: Map<ContextType, Context> = new Map()
@@ -103,10 +103,10 @@ function selectionInTable(editor: vscode.TextEditor): boolean {
         const selection = editor.selections[0]
         if (selection.start.isEqual(selection.end)) {
             const line = editor.document.lineAt(selection.start.line).text
-            const left = line.substr(0, selection.start.character)
-            const right = line.substr(selection.start.character)
+            const left = line.substring(0, selection.start.character)
+            const right = line.substring(selection.start.character)
 
-            return ((left.indexOf('|') >= 0) && (right.indexOf('|') >= 0))
+            return ((left.indexOf("|") >= 0) && (right.indexOf("|") >= 0))
         }
     }
     return false
@@ -117,7 +117,7 @@ function selectionPotentiallyInTable(editor: vscode.TextEditor): boolean {
         const selection = editor.selections[0]
         if (selection.start.isEqual(selection.end)) {
             const line = editor.document.lineAt(selection.start.line).text
-            const left = line.substr(0, selection.start.character)
+            const left = line.substring(0, selection.start.character)
 
             return (tableSeparatorStart.test(left))
         }
@@ -131,9 +131,9 @@ class Context {
     }
 
     setState(isEnabled: boolean) {
-        vscode.commands.executeCommand('setContext', this._type, isEnabled)
+        vscode.commands.executeCommand("setContext", this._type, isEnabled)
         if (this._statusItem) {
-            const stateText = isEnabled ? '$(check)' : '$(x)'
+            const stateText = isEnabled ? "$(check)" : "$(x)"
             this._statusItem.text = `${this._title} ${stateText}`
         }
     }

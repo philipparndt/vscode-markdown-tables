@@ -1,13 +1,13 @@
-'use strict'
+"use strict"
 
-import * as vscode from 'vscode'
-import * as utils from './utils'
-import * as cmd from './commands'
-import { Locator, Parser, Stringifier, Table } from './ttTable'
-import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from './ttMarkdown'
-import { registerContext, ContextType, enterContext, exitContext, restoreContext, toggleContext, updateSelectionContext } from './context/context'
-import * as cfg from './configuration'
-import { enterMarkdownTables, exitMarkdownTables } from './context/markdownTables'
+import * as vscode from "vscode"
+import * as utils from "./utils"
+import * as cmd from "./commands"
+import { Locator, Parser, Stringifier, Table } from "./ttTable"
+import { MarkdownLocator, MarkdownParser, MarkdownStringifier } from "./ttMarkdown"
+import { registerContext, ContextType, enterContext, exitContext, restoreContext, toggleContext, updateSelectionContext } from "./context/context"
+import * as cfg from "./configuration"
+import { enterMarkdownTables, exitMarkdownTables } from "./context/markdownTables"
 
 let locator: Locator
 let parser: Parser
@@ -24,14 +24,14 @@ function loadConfiguration() {
 
 export function activate(ctx: vscode.ExtensionContext) {
     loadConfiguration()
-    registerContext(ContextType.inTable, 'Cursor in table')
-    registerContext(ContextType.potentiallyInTable, 'Cursor potentially in table')
-    registerContext(ContextType.markdownTables, 'Markdown tables')
+    registerContext(ContextType.inTable, "Cursor in table")
+    registerContext(ContextType.potentiallyInTable, "Cursor potentially in table")
+    registerContext(ContextType.markdownTables, "Markdown tables")
 
     const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left)
 
-    registerContext(ContextType.tableMode, 'Table', statusItem)
-    statusItem.command = 'text-tables.tableModeToggle'
+    registerContext(ContextType.tableMode, "Table", statusItem)
+    statusItem.command = "text-tables.tableModeToggle"
 
     enterMarkdownTables()
 
@@ -56,16 +56,16 @@ export function activate(ctx: vscode.ExtensionContext) {
         }
     })
 
-    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.enable', () => {
+    ctx.subscriptions.push(vscode.commands.registerCommand("text-tables.enable", () => {
         if (configuration.showStatus) {
             statusItem.show()
         }
         enterMarkdownTables()
 
-        vscode.window.showInformationMessage('Markdown tables enabled!')
+        vscode.window.showInformationMessage("Markdown tables enabled!")
     }))
 
-    ctx.subscriptions.push(vscode.commands.registerCommand('text-tables.disable', () => {
+    ctx.subscriptions.push(vscode.commands.registerCommand("text-tables.disable", () => {
         statusItem.hide()
 
         const editor: vscode.TextEditor | undefined = vscode.window.activeTextEditor
@@ -74,54 +74,54 @@ export function activate(ctx: vscode.ExtensionContext) {
         }
         exitMarkdownTables()
 
-        vscode.window.showInformationMessage('Markdown tables disabled!')
+        vscode.window.showInformationMessage("Markdown tables disabled!")
     }))
 
-    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.tableModeOn',
+    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand("text-tables.tableModeOn",
         (e) => enterContext(e, ContextType.tableMode)))
-    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.tableModeOff',
+    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand("text-tables.tableModeOff",
         (e) => exitContext(e, ContextType.tableMode)))
-    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.tableModeToggle',
+    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand("text-tables.tableModeToggle",
         (e) => toggleContext(e, ContextType.tableMode)))
     
-    ctx.subscriptions.push(registerTableCommand('text-tables.moveRowDown', cmd.moveRowDown, {format: true}))
-    ctx.subscriptions.push(registerTableCommand('text-tables.moveRowUp', cmd.moveRowUp, {format: true}))
-    ctx.subscriptions.push(registerTableCommand('text-tables.moveColRight', async (editor, range, table) => {
+    ctx.subscriptions.push(registerTableCommand("text-tables.moveRowDown", cmd.moveRowDown, {format: true}))
+    ctx.subscriptions.push(registerTableCommand("text-tables.moveRowUp", cmd.moveRowUp, {format: true}))
+    ctx.subscriptions.push(registerTableCommand("text-tables.moveColRight", async (editor, range, table) => {
         await cmd.moveColRight(editor, range, table, stringifier)
     }))
-    ctx.subscriptions.push(registerTableCommand('text-tables.moveColLeft', async (editor, range, table) => {
+    ctx.subscriptions.push(registerTableCommand("text-tables.moveColLeft", async (editor, range, table) => {
         await cmd.moveColLeft(editor, range, table, stringifier)
     }))
-    ctx.subscriptions.push(registerTableCommand('text-tables.createColLeft', async (editor, range, table) => {
+    ctx.subscriptions.push(registerTableCommand("text-tables.createColLeft", async (editor, range, table) => {
         await cmd.createColumnOnLeft(editor, range, table, stringifier)
     }))
-    ctx.subscriptions.push(registerTableCommand('text-tables.deleteColumn', async (editor, range, table) => {
+    ctx.subscriptions.push(registerTableCommand("text-tables.deleteColumn", async (editor, range, table) => {
         await cmd.deleteColumn(editor, range, table, stringifier)
     }))
 
-    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.clearCell',
+    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand("text-tables.clearCell",
         (e, ed) => cmd.clearCell(e, ed, parser)))
 
-    ctx.subscriptions.push(registerTableCommand('text-tables.gotoNextCell', async (editor, range, table) => {
+    ctx.subscriptions.push(registerTableCommand("text-tables.gotoNextCell", async (editor, range, table) => {
         await cmd.gotoNextCell(editor, range, table, stringifier)
     }))
 
-    ctx.subscriptions.push(registerTableCommand('text-tables.gotoPreviousCell', cmd.gotoPreviousCell, {format: true}))
-    ctx.subscriptions.push(registerTableCommand('text-tables.nextRow', async (editor, range, table) => {
+    ctx.subscriptions.push(registerTableCommand("text-tables.gotoPreviousCell", cmd.gotoPreviousCell, {format: true}))
+    ctx.subscriptions.push(registerTableCommand("text-tables.nextRow", async (editor, range, table) => {
         await cmd.nextRow(editor, range, table, stringifier)
     }))
 
     // Format table under cursor
-    ctx.subscriptions.push(registerTableCommand('text-tables.formatUnderCursor',
+    ctx.subscriptions.push(registerTableCommand("text-tables.formatUnderCursor",
         (editor, range, table) => cmd.formatUnderCursor(editor, range, table, stringifier)))
 
-    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand('text-tables.createTable', async editor => {
+    ctx.subscriptions.push(vscode.commands.registerTextEditorCommand("text-tables.createTable", async editor => {
         const opts: vscode.InputBoxOptions = {
-            value: '5x2',
-            prompt: 'Table size Columns x Rows (e.g. 5x2)',
+            value: "5x2",
+            prompt: "Table size Columns x Rows (e.g. 5x2)",
             validateInput: (value: string) => {
                 if (!utils.tableSizeRe.test(value)) {
-                    return 'Provided value is invalid. Please provide the value in format Columns x Rows (e.g. 5x2)'
+                    return "Provided value is invalid. Please provide the value in format Columns x Rows (e.g. 5x2)"
                 }
                 return
             }

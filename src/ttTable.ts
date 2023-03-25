@@ -1,4 +1,4 @@
-import * as vscode from 'vscode'
+import * as vscode from "vscode"
 
 export enum RowType {
     unknown,
@@ -31,7 +31,7 @@ export class Table {
     /**
      * The table prefix to keep the current indentation
      */
-    prefix = ''
+    prefix = ""
 
     rows: RowDef[] = []
     cols: ColDef[] = []
@@ -49,7 +49,7 @@ export class Table {
             adjustCount = Math.abs(row.length - values.length)
 
             while (adjustCount-- > 0) {
-                adjustee.push('')
+                adjustee.push("")
             }
         }
 
@@ -78,7 +78,7 @@ export class Table {
         this.cols.splice(index, 0, newColumn)
 
         for (const row of this._data) {
-            row.splice(index, 0, '')
+            row.splice(index, 0, "")
         }
     }
 

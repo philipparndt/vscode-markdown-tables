@@ -1,5 +1,5 @@
-import * as vscode from 'vscode'
-import { Table, RowType, Stringifier, TableNavigator, Parser } from './ttTable'
+import * as vscode from "vscode"
+import { Table, RowType, Stringifier, TableNavigator, Parser } from "./ttTable"
 
 /**
  * Create new table with specified rows and columns count in position of cursor
@@ -7,7 +7,7 @@ import { Table, RowType, Stringifier, TableNavigator, Parser } from './ttTable'
 export async function createTable(rowsCount: number, colsCount: number, editor: vscode.TextEditor, stringifier: Stringifier) {
     const table = new Table()
     for (let i = 0; i < rowsCount + 1; i++) {
-        table.addRow(RowType.data, new Array(colsCount).fill(''))
+        table.addRow(RowType.data, new Array(colsCount).fill(""))
     }
     table.rows[1].type = RowType.separator
 
@@ -24,7 +24,7 @@ export async function moveRowDown(editor: vscode.TextEditor, _range: vscode.Rang
     if (rowNum >= table.rows.length - 1) {
         return
     }
-    await vscode.commands.executeCommand('editor.action.moveLinesDownAction')
+    await vscode.commands.executeCommand("editor.action.moveLinesDownAction")
 }
 
 /**
@@ -35,7 +35,7 @@ export async function moveRowUp(editor: vscode.TextEditor, _range: vscode.Range,
     if (rowNum <= 0) {
         return
     }
-    await vscode.commands.executeCommand('editor.action.moveLinesUpAction')
+    await vscode.commands.executeCommand("editor.action.moveLinesUpAction")
 }
 
 /**
@@ -51,7 +51,7 @@ export async function gotoNextCell(editor: vscode.TextEditor, range: vscode.Rang
         editor.selection = new vscode.Selection(newPos, newPos)
     }
     else {
-        table.addRow(RowType.data, new Array(table.cols.length).fill(''))
+        table.addRow(RowType.data, new Array(table.cols.length).fill(""))
         await gotoNextCell(editor, range, table, stringifier)
     }
 }
@@ -97,7 +97,7 @@ export async function moveColRight(editor: vscode.TextEditor, range: vscode.Rang
     const start = editor.selection.start
     const rowCol = rowColFromPosition(table, start)
     if (rowCol.col < 0) {
-        vscode.window.showWarningMessage('Not in table data field')
+        vscode.window.showWarningMessage("Not in table data field")
         return
     }
 
@@ -129,7 +129,7 @@ export async function moveColLeft(editor: vscode.TextEditor, range: vscode.Range
     const start = editor.selection.start
     const rowCol = rowColFromPosition(table, start)
     if (rowCol.col < 0) {
-        vscode.window.showWarningMessage('Not in table data field')
+        vscode.window.showWarningMessage("Not in table data field")
         return
     }
 
@@ -157,7 +157,7 @@ export async function moveColLeft(editor: vscode.TextEditor, range: vscode.Range
 export async function createColumnOnLeft(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
     const rowCol = rowColFromPosition(table, editor.selection.start)
     if (rowCol.col < 0) {
-        vscode.window.showWarningMessage('Not in table data field')
+        vscode.window.showWarningMessage("Not in table data field")
         return
     }
 
@@ -170,7 +170,7 @@ export async function createColumnOnLeft(editor: vscode.TextEditor, range: vscod
 export async function deleteColumn(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
     const rowCol = rowColFromPosition(table, editor.selection.start)
     if (rowCol.col < 0) {
-        vscode.window.showWarningMessage('Not in table data field')
+        vscode.window.showWarningMessage("Not in table data field")
         return
     }
 
@@ -198,23 +198,23 @@ export function clearCell(editor: vscode.TextEditor, edit: vscode.TextEditorEdit
     const currentLine = document.lineAt(currentLineNumber)
 
     if (parser.isSeparatorRow(currentLine.text)) {
-        vscode.window.showInformationMessage('Not in table data field')
+        vscode.window.showInformationMessage("Not in table data field")
         return
     }
 
-    const leftSepPosition = currentLine.text.lastIndexOf('|', editor.selection.start.character - 1)
-    let rightSepPosition = currentLine.text.indexOf('|', editor.selection.start.character)
+    const leftSepPosition = currentLine.text.lastIndexOf("|", editor.selection.start.character - 1)
+    let rightSepPosition = currentLine.text.indexOf("|", editor.selection.start.character)
     if (rightSepPosition < 0) {
         rightSepPosition = currentLine.range.end.character
     }
 
     if (leftSepPosition === rightSepPosition) {
-        vscode.window.showInformationMessage('Not in table data field')
+        vscode.window.showInformationMessage("Not in table data field")
         return
     }
 
     const r = new vscode.Range(currentLineNumber, leftSepPosition + 1, currentLineNumber, rightSepPosition)
-    edit.replace(r, ' '.repeat(rightSepPosition - leftSepPosition - 1))
+    edit.replace(r, " ".repeat(rightSepPosition - leftSepPosition - 1))
     const newPos = new vscode.Position(currentLineNumber, leftSepPosition + 2)
     editor.selection = new vscode.Selection(newPos, newPos)
 }
@@ -227,7 +227,7 @@ export async function nextRow(editor: vscode.TextEditor, range: vscode.Range, ta
     const start = editor.selection.start
 
     if (inLastRow) {
-        table.addRow(RowType.data, new Array(table.cols.length).fill(''))
+        table.addRow(RowType.data, new Array(table.cols.length).fill(""))
     }
 
     await editor.edit(b => b.replace(range, stringifier.stringify(table, editor.document.eol)))

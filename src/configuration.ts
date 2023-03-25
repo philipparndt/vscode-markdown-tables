@@ -1,9 +1,9 @@
-import * as vscode from 'vscode'
+import * as vscode from "vscode"
 
-export const section = 'text-tables'
+export const section = "text-tables"
 
-export const modeKey = 'mode'
-export const showStatusKey = 'showStatus'
+export const modeKey = "mode"
+export const showStatusKey = "showStatus"
 
 export interface Configuration {
     showStatus: boolean
