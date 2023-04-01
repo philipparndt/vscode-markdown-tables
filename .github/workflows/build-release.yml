@@ -23,15 +23,19 @@ jobs:
           changes=$(./.github/workflows/getChanges.sh)
           echo "Changes:"
           echo $changes
-          echo "::set-output name=changes::$changes"
+
+          delimiter="$(openssl rand -hex 8)"
+          echo "changes<<${delimiter}" >> "${GITHUB_OUTPUT}"
+          echo "$changes" >> "${GITHUB_OUTPUT}"
+          echo "${delimiter}" >> "${GITHUB_OUTPUT}"
 
       - id: project-version
         name: Get project version
         run: |
           version=$(./.github/workflows/getVersion.sh)
           suffix=b${{ github.run_number }}
-          echo "::set-output name=version::$version"
-          echo "::set-output name=release::$version-$suffix"
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "release=$version-$suffix" >> $GITHUB_OUTPUT
 
       - name: Build ${{ steps.project-version.outputs.release }}
         run: |
@@ -70,7 +74,7 @@ jobs:
           asset_name: vscode-markdown-table-${{steps.project-version.outputs.version}}.vsix
           asset_content_type: application/vsix
 
-      - uses: lannonbr/vsce-action@3.0.0
+      - uses: philipparndt/vsce-action@master
         with:
           args: "publish -p $VSCE_TOKEN"
         env:

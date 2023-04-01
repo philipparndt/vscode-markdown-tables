@@ -23,4 +23,8 @@ jobs:
           changes=$(./.github/workflows/getChanges.sh)
           echo "Changes:"
           echo $changes
-          echo "::set-output name=changes::$changes"
+
+          delimiter="$(openssl rand -hex 8)"
+          echo "changes<<${delimiter}" >> "${GITHUB_OUTPUT}"
+          echo "$changes" >> "${GITHUB_OUTPUT}"
+          echo "${delimiter}" >> "${GITHUB_OUTPUT}"
