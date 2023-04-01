@@ -91,6 +91,31 @@ export async function formatUnderCursor(editor: vscode.TextEditor, range: vscode
 }
 
 /**
+ * Convert the current row to a separator row
+ */
+export async function createSeparator(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {
+    const start = editor.selection.start
+    const rowCol = rowColFromPosition(table, start)
+    if (rowCol.col < 0) {
+        vscode.window.showWarningMessage("Not in table data field")
+        return
+    }
+
+    const row = table.rows[rowCol.row]
+    if (row) {
+        row.type = RowType.separator
+    }
+
+    const newText = stringifier.stringify(table, editor.document.eol)
+    await editor.edit(e => e.replace(range, newText))
+    await setCursor(editor, table, {
+        row: rowCol.row,
+        col: rowCol.col + 1
+    })
+}
+
+
+/**
  * Swap column under cursor with column on the right
  */
 export async function moveColRight(editor: vscode.TextEditor, range: vscode.Range, table: Table, stringifier: Stringifier) {

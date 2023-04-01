@@ -86,6 +86,9 @@ export function activate(ctx: vscode.ExtensionContext) {
     
     ctx.subscriptions.push(registerTableCommand("text-tables.moveRowDown", cmd.moveRowDown, {format: true}))
     ctx.subscriptions.push(registerTableCommand("text-tables.moveRowUp", cmd.moveRowUp, {format: true}))
+    ctx.subscriptions.push(registerTableCommand("text-tables.createSeparator", async (editor, range, table) => {
+        await cmd.createSeparator(editor, range, table, stringifier)
+    }))
     ctx.subscriptions.push(registerTableCommand("text-tables.moveColRight", async (editor, range, table) => {
         await cmd.moveColRight(editor, range, table, stringifier)
     }))
