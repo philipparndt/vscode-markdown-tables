@@ -204,7 +204,6 @@ suite("Commands", () => {
         await inTextEditor({language: "markdown", content: input}, async (editor, _) => {
             move(editor, 2, 5)
             for (const t of testCases) {
-                console.log(t)
                 await vscode.commands.executeCommand("text-tables.gotoPreviousCell")
                 assert.deepEqual(editor.selection.start, t)
             }
@@ -389,6 +388,34 @@ suite("Commands", () => {
                 await vscode.commands.executeCommand("text-tables.nextRow")
                 assertDocumentText(document, expected)
             }
+        })
+    })
+
+    test("Test \"Create Separator\"", async () => {
+        const input =
+"| Hello | world |"
+
+        const steps = [
+`| Hello | world |
+|       |       |`
+,
+`| Hello | world |
+| ----- | ----- |`
+,
+`| Hello | world |
+| ----- | ----- |
+|       |       |`
+        ]
+
+        await inTextEditor({language: "markdown", content: input}, async (editor, document) => {
+
+            move(editor, 0, 2)
+            await vscode.commands.executeCommand("text-tables.nextRow")
+            assertDocumentText(document, steps[0])
+            await vscode.commands.executeCommand("text-tables.createSeparator")
+            assertDocumentText(document, steps[1])
+            await vscode.commands.executeCommand("text-tables.nextRow")
+            assertDocumentText(document, steps[2])
         })
     })
 })

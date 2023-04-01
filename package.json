@@ -2,7 +2,7 @@
     "name": "vscode-markdown-table",
     "displayName": "Markdown Tables",
     "description": "Create, modify and format markdown tables",
-    "version": "1.6.0",
+    "version": "1.7.0",
     "icon": "icons/icon.png",
     "preview": false,
     "publisher": "pharndt",
@@ -79,6 +79,11 @@
             {
                 "command": "text-tables.clearCell",
                 "title": "Markdown Tables: Clear cell"
+            },
+            {
+                "command": "text-tables.createSeparator",
+                "title": "Convert row to a separator",
+                "category": "Markdown Tables"
             },
             {
                 "command": "text-tables.moveRowDown",
@@ -166,6 +171,11 @@
                 "command": "text-tables.moveRowDown",
                 "key": "alt+down",
                 "when": "tableMode"
+            },
+            {
+                "command": "text-tables.createSeparator",
+                "key": "alt+/",
+                "when": "tableMode && inTable"
             },
             {
                 "command": "text-tables.moveColRight",
